@@ -31,14 +31,17 @@ class SignUpView(View):
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             User.objects.create(
-                login_id  = login_id,
-                password  = hashed_password,
-                nickname  = data['nickname']
-
-                
-
-
-
+                login_id          = login_id,
+                password          = hashed_password,
+                nickname          = data['nickname'],
+                email             = email,
+                gender            = data['gender'],
+                birth_date        = data['birth_date'],
+                profile_image_url = data['profile_image_url'],
+            )
+            return JsonResponse ({'message:':'CREATE USER'}, status=200)
+        except KeyError:
+            return JsonResponse({'message:':'KeyError'}, status=400)
 
 class LogInIdCheckView(View):
     def post(self, request):
@@ -54,4 +57,25 @@ class LogInIdCheckView(View):
             return JsonResponse({'message:':'Success'}, status=200)
         except KeyError:
             return JsonResponse({'message:':'KeyError'}, status=400)
+
+class LogIngView(View):
+    def post(self, request):
+        try:
+            data     = json.loads(request.body)
+            email    = data['email']
+            password = data['password']
+            user     = User.objects.get(email=email)
+
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'):
+                token = jwt.encode({'email':email}, SECRET_KEY, algorithm='HS256').decode('utf-8)
+
+                return JsonResponse({'token':token}, status=200)
+            return JsonResponse({'message:':'invalid password'}, status=400)
+        except KeyError:
+            return JsonResponse({'message:':'invalid ID'}, status=400)
+
+
+
+
+
 
