@@ -26,17 +26,10 @@ class Ootd(models.Model):
 
 class Like(models.Model):
     ootd = models.ForeignKey('Ootd', on_delete=models.CASCADE)
-    user = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='user_like')
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'likes'
-
- #class ProductOotd(models.Model):
- #    ootd    = models.ForeignKey('Ootd', on_delete=models.CASCADE)
- #    product = models.ForeignKey('product.Product', on_delete=models.CASCADE)
- #
- #    class Meta:
- #        db_table = 'products_ootds'
 
 class Comment(models.Model):
     comment    = models.CharField(max_length=100)

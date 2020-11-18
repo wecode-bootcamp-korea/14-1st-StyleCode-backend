@@ -13,8 +13,9 @@ class User(models.Model):
     website_url       = models.URLField(max_length=200, null=True)
     address           = models.CharField(max_length=50, null=True)
     coupon            = models.ManyToManyField('cart.Coupon', through='cart.UserCoupon')
-    like              = models.ManyToManyField('ootd.Ootd', through='ootd.Like', null=True, related_name='like_user')
-    follow            = models.ManyToManyField('self' , through='ootd.Follow', null=True)
+    ootd_like         = models.ManyToManyField('ootd.Ootd', through='ootd.Like', related_name='like_user')
+    follow            = models.ManyToManyField('self', through='ootd.Follow')
+    cart              = models.ManyToManyField('product.Product', through='cart.Cart')
 
     class Meta:
         db_table = 'users'

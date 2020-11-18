@@ -79,7 +79,6 @@ class Product(models.Model):
     brand           = models.ForeignKey('Brand' , on_delete=models.CASCADE)
     color           = models.ManyToManyField('Color', through='ProductColor')
     size            = models.ManyToManyField('Size', through='ProductSize')
-    cart            = models.ForeignKey('cart.Cart', on_delete=models.CASCADE, null=True, related_name='cart_product')
     second_category = models.ForeignKey('SecondCategory', on_delete=models.CASCADE)
     third_category  = models.ForeignKey('ThirdCategory', on_delete=models.CASCADE)
     ootd            = models.ManyToManyField('ootd.Ootd', through='ProductOotd')

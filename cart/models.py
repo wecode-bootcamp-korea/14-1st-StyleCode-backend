@@ -3,7 +3,7 @@ from django.db import models
 class Cart(models.Model):
     quantity = models.IntegerField()
     product  = models.ForeignKey('product.Product', on_delete=models.CASCADE, related_name='product_cart')
-    user     = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    user     = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='user_cart')
     order    = models.ForeignKey('order.Order', on_delete=models.CASCADE, null=True)
 
     class Meta:
