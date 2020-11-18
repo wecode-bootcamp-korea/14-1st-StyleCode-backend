@@ -14,7 +14,6 @@ class OotdTag(models.Model):
         db_table = 'ootds_tags'
 
 class Ootd(models.Model):
-    image_url   = models.URLField(max_length=100)
     description = models.TextField()
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at  = models.DateTimeField(auto_now=True, null=True)
@@ -23,6 +22,13 @@ class Ootd(models.Model):
 
     class Meta:
         db_table = 'ootds'
+
+class OotdImageUrl(models.Model):
+    image_url = models.URLField(max_length=200)
+    ootd      = models.ForeignKey('Ootd', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'ootd_image_urls'
 
 class Like(models.Model):
     ootd = models.ForeignKey('Ootd', on_delete=models.CASCADE)
