@@ -48,6 +48,7 @@ class Order(models.Model):
     coupon                 = models.ForeignKey('cart.Coupon', on_delete=models.CASCADE)
     order_status           = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
     order_request          = models.ForeignKey('OrderRequest', on_delete=models.CASCADE)
+
     class Meta:
         db_table = 'orders'
 

@@ -38,7 +38,7 @@ class Like(models.Model):
         db_table = 'likes'
 
 class Comment(models.Model):
-    comment    = models.CharField(max_length=100)
+    content    = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     user       = models.ForeignKey('user.User', on_delete=models.CASCADE)
@@ -51,8 +51,4 @@ class Comment(models.Model):
 class Follow(models.Model):
     follwer  = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='from_user')
     followee = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='to_user')
-
-
-
-
 

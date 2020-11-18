@@ -75,7 +75,3 @@ class LogIngView(View):
             return JsonResponse({'message:':'invalid ID'}, status=400)
 
 
-
-
-
-
