@@ -76,7 +76,7 @@ class Product(models.Model):
     description     = models.TextField()
     discount_rate   = models.DecimalField(max_digits=3, decimal_places=2, null= True)
     sales           = models.IntegerField(default=0)
-    main_image_url  = models.URLField(max_length=200)
+    main_image_url  = models.URLField(max_length=200, null=False)
     brand           = models.ForeignKey('Brand' , on_delete=models.CASCADE)
     color           = models.ManyToManyField('Color', through='ProductColor')
     size            = models.ManyToManyField('Size', through='ProductSize')
