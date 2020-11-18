@@ -80,6 +80,7 @@ class Product(models.Model):
     brand           = models.ForeignKey('Brand' , on_delete=models.CASCADE)
     color           = models.ManyToManyField('Color', through='ProductColor')
     size            = models.ManyToManyField('Size', through='ProductSize')
+    like            = models.IntegerField(default=0)
     second_category = models.ForeignKey('SecondCategory', on_delete=models.CASCADE)
     third_category  = models.ForeignKey('ThirdCategory', on_delete=models.CASCADE)
     ootd            = models.ManyToManyField('ootd.Ootd', through='ProductOotd')
