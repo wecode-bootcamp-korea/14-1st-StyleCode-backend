@@ -77,4 +77,47 @@ class LogInView(View):
         except User.DoesNotExist:
             return JsonResponse({'message:':'USER_DOES_NOT_EXIST'}, status=400)
 
+class ProfileView(View):
+    @Login_decorator
+    def get(self, request):
+        try :
+            user = User.objects.get(id = request.user_id)
+
+            user_info = {
+                'nickname'          : user.nickname,
+                'gender_id'         : user.gender_id,
+                'birth_date'        : user.birth_date,
+                'country'           : user.country,
+                'website_url'       : user.website_url,
+                'description'       : user.description,
+                'profile_image_url' : user.profile_image_url,
+            }
+            return JsonResponse ({'user_info:': user_info}, status=400)
+        except KeyError:
+            return JsonResponse({'message:':'KEY_ERROR'}, status=400)
+
+    @Login_decorator
+    def put(self, request):
+        try:
+            data = json.loads(request.body)
+            user = User.objects.get(id = request.user_id)
+
+            if 'country' in data:
+                user.country = data['country']
+            if 'gender' in data:
+                user.gender = data['gender']
+            if 'birth_date' in data:
+                user.birth_date = data['birth_date']
+            if 'website_url' in data:
+                user.website_url = data['website_url']
+            if 'description' in data:
+                user.description =data['description']
+            if 'profile_image_url' in data:
+                user.profile_image_url = data['profile_image_url']
+            user.save()
+
+            return JsonResponse({'message:':'SUCCESS'}, status=200)
+        except KeyError:
+            return JsonResponse({'message:':'KEY_ERROR'}, status=400)
+
 
