@@ -187,3 +187,5 @@ with open(csv_path) as csv_file:
     next(rows)
     for row in rows:
         Follow.objects.create(follower_id=row[0], followee_id=row[1])
+
+print('데이터베이스에 데이터를 추가하였습니다.')
