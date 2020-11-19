@@ -43,4 +43,4 @@ with connection.cursor() as cursor:
     cursor.execute('truncate users_coupons')
     cursor.execute('set foreign_key_checks=1')
 
-print('데이터 베이스 초기화가 완료 되었습니다.')
+print('데이터 베이스 초기화가 완료되었습니다.')
