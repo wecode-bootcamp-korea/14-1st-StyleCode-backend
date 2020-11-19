@@ -13,6 +13,9 @@ class Coupon(models.Model):
     name          = models.CharField(max_length=20)
     discount_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2, null=True)
+    limit_price   = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    limit_period  = models.DateTimeField(null=True)
+
 
     class Meta:
         db_table = 'coupons'
