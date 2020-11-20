@@ -1,12 +1,12 @@
 import json
 import decimal
 
-from django.views import View
-from django.http import JsonResponse
+from django.views    import View
+from django.http     import JsonResponse
 
-from product.models import Product, ProductColor, ProductImageUrl, ProductSize, Brand, Stock, Color
-from ootd.models import Ootd, Like, Comment, OotdImageUrl
-from user.models import User 
+from product.models  import Product, ProductColor, ProductImageUrl, ProductSize, Brand, Stock, Color
+from ootd.models     import Ootd, Like, Comment, OotdImageUrl
+from user.models     import User
 
 class ProductDetail(View):
     def get(self, request, product_id):
@@ -21,10 +21,10 @@ class ProductDetail(View):
                 'main_image_url' : product.main_image_url,
                 'discount_rate' : product.discount_rate,
                 'product_price' : product.price,
-                'discount_price' : product.price * product.discount_rate,
+                'discount_price' : product.price - (product.price * product.discount_rate),
                 'product_like' : product.like,
                 'product_ootd_counts' : product.ootd.count(),
-                'points' : int(product.price * product.discount_rate * decimal.Decimal(0.05)),
+                'points' : int(product.price - (product.price * product.discount_rate) * decimal.Decimal(0.05)),
                 'colors' : [color.name for color in product.color.all()],
                 'sizes' : [size.name for size in product.size.all()],
                 'stocks' : [{
