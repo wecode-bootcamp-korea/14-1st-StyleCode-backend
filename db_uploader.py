@@ -61,7 +61,7 @@ with open(csv_path) as csv_file:
     rows = csv.reader(csv_file, delimiter=',')
     next(rows)
     for row in rows:
-        Product.objects.create(title=row[0],price=row[1],model_name=row[2], description=row[3], discount_rate=row[4], sales=row[5], brand_id=row[6], second_category_id=row[7], third_category_id=row[8], main_image_url=row[9], like=row[10])
+        Product.objects.create(title=row[0],price=row[1],model_name=row[2], description=row[3], discount_rate=row[4], sales=row[5], brand_id=row[6], second_category_id=row[7], third_category_id=row[8], main_image_url=row[9], like=row[10], first_category_id=row[11])
 
 csv_path = './csv_data/colors.csv'
 with open(csv_path) as csv_file:
@@ -137,13 +137,6 @@ with open(csv_path) as csv_file:
     for row in rows:
         Ootd.objects.create(user_id=row[0], description=row[1])
 
-csv_path = './csv_data/ootd_image_urls.csv'
-with open(csv_path) as csv_file:
-    rows = csv.reader(csv_file, delimiter=',')
-    next(rows)
-    for row in rows:
-        OotdImageUrl.objects.create(ootd_id=row[0], image_url=row[1])
-
 csv_path = './csv_data/products_ootds.csv'
 with open(csv_path) as csv_file:
     rows = csv.reader(csv_file, delimiter=',')
@@ -164,6 +157,14 @@ with open(csv_path) as csv_file:
     next(rows)
     for row in rows:
         OotdTag.objects.create(ootd_id=row[0], tag_id=row[1])
+
+csv_path = './csv_data/ootd_image_urls.csv'
+with open(csv_path) as csv_file:
+    rows = csv.reader(csv_file, delimiter=',')
+    next(rows)
+    for row in rows:
+        OotdImageUrl.objects.create(ootd_id=row[0], image_url=row[1])
+
 
 csv_path = './csv_data/likes.csv'
 with open(csv_path) as csv_file:

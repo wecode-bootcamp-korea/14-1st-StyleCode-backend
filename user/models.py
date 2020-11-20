@@ -23,4 +23,5 @@ class User(models.Model):
 class Gender(models.Model):
     name = models.CharField(max_length=10)
 
-
+    class Meta:
+        db_table = 'genders'

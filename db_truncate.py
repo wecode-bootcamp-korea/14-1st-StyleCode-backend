@@ -38,7 +38,7 @@ with connection.cursor() as cursor:
     cursor.execute('truncate stocks')
     cursor.execute('truncate tags')
     cursor.execute('truncate third_categories')
-    cursor.execute('truncate user_gender')
+    cursor.execute('truncate genders')
     cursor.execute('truncate users')
     cursor.execute('truncate users_coupons')
     cursor.execute('set foreign_key_checks=1')
