@@ -40,31 +40,37 @@ class OotdDetailView(View):
             return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
 
 
-    def get(self, request):
-        data = json.loads(request.body)
+    def get(self, request, ootd_id):
         try:
             posts = Ootd.objects.select_related('user').prefetch_related(
                 'like_set',
                 'ootdimageurl_set',
-                'comment_set'
+                'comment_set',
+                'product_set',
             )
 
-            post = posts.get(id = data['ootd_id'])
+            post = posts.get(id = ootd_id)
             ootd_post = [
-                {
-                    'ootd_image_urls'        : [image.image_url for image in post.ootdimageurl_set.all()],
-                    'ootd_profile_image_url' : post.user.profile_image_url,
-                    'nickname'               : post.user.nickname,
-                    'description'            : post.description,
-                    'like_count'             : post.like_set.count(),
-                    'comments'               : [
+                    {
+                    'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
+                    'productImg'        : [product_image.main_image_url for product_image in post.product_set.all()],
+                    'productName'       : [product_name.title for product_name in post.product_set.all()],
+                    'price'             : [product_price.price for product_price in post.product_set.all()],
+                    'sale'              : [product_sales.sales for product_sales in post.product_set.all()],
+                    'authorImg'         : post.user.profile_image_url,
+                    'author'            : post.user.nickname,
+                    'tagsName'          : [tag_name.tag.tag_name for tag_name in post.ootdtag_set.all()],
+                    'datetime'          : str(post.created_at)[:19],
+                    'description'       : post.description,
+                    'follower'          : post.like_set.count(),
+                    'commentNum'        : post.comment_set.count(),
+                    'comments'          : [
                             {
-                                'comment_user_nickname'          : comment.nickname,
-                                'comment_user_profile_image_url' : comment.profile_image_url,
-                                'comment_comment'                : comment.comment,
-                                'comment_create_at'              : str(comment.created_at),
-                                'parent_id'                      : comment.parent_id
-                            } for comment in post.comment_set.all()
+                                'commentAuthor'    : comment.user.nickname,
+                                'commentAuthorImg' : comment.user.profile_image_url,
+                                'comment'          : comment.content,
+                                'parent_id'        : comment.parent_id
+                            } for comment in post.comment_set.all()[:2]
                         ]
                     }
                 ]
@@ -80,28 +86,36 @@ class OotdListlView(View):
                 'like_set',
                 'ootdimageurl_set',
                 'comment_set',
+                'product_set',
+                'tag'
             )
 
             ootd_list = [
                 {
-                    'ootd_image_urls'        : [image.image_url for image in post.ootdimageurl_set.all()],
-                    'ootd_profile_image_url' : post.user.profile_image_url,
-                    'nickname'               : post.user.nickname,
-                    'description'            : post.description,
-                    'like_count'             : post.like_set.count(),
-                    'comment_count'          : post.comment_set.count(),
-                    'comments'               : [
+                    'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
+                    'productImg'        : [product_image.main_image_url for product_image in post.product_set.all()],
+                    'productName'       : [product_name.title for product_name in post.product_set.all()],
+                    'price'             : [product_price.price for product_price in post.product_set.all()],
+                    'sale'              : [product_sales.sales for product_sales in post.product_set.all()],
+                    'authorImg'         : post.user.profile_image_url,
+                    'author'            : post.user.nickname,
+                    'tagsName'          : [tag_name.tag_name for tag_name in post.tag.all()],
+                    'datetime'          : str(post.created_at)[:19],
+                    'description'       : post.description,
+                    'follower'          : post.like_set.count(),
+                    'commentNum'        : post.comment_set.count(),
+                    'comments'          : [
                             {
-                                'comment_user_nickname'          : comment.nickname,
-                                'comment_user_profile_image_url' : comment.profile_image_url,
-                                'comment_comment'                : comment.comment[:2],
-                                'comment_create_at'              : str(comment.created_at),
-                            } for comment in post.comment_set.all()
+                                'commentAuthor'    : comment.user.nickname,
+                                'commentAuthorImg' : comment.user.profile_image_url,
+                                'comment'          : comment.content,
+                                'parent_id'        : comment.parent_id
+                            } for comment in post.comment_set.all()[:2]
                         ]
                     } for post in posts
             ]
 
-            return JsonResponse({'ootd_list' : list(ootd_list)}, status = 200)
+            return JsonResponse({'ootd_list' : ootd_list}, status = 200)
         
         except Ootd.DoesNotExist:
             return JsonResponse({"MESSAGE" : "DOES_NOT_EXIST"}, status = 400)   
@@ -115,7 +129,7 @@ class CommentView(View):
             post = Ootd.objects.get(id = data['ootd_id'])
 
             Comment.objects.create(
-                comment = data['comment'],
+                content = data['content'],
                 user = user,
                 ootd = post,
             )
@@ -139,7 +153,7 @@ class CommentView(View):
             user = User.objects.get(id = data['user_id'])
             comment = Comment.objects.get(user=user, id = data['comment_id'])
 
-            comment.comment = data['comment']
+            comment.content = data['content']
 
             comment.save()
 

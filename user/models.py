@@ -4,7 +4,7 @@ class User(models.Model):
     login_id          = models.CharField(max_length=20)
     password          = models.CharField(max_length=150)
     email             = models.EmailField()
-    gender            = models.CharField(max_length=10)
+    gender            = models.ForeignKey('Gender', on_delete=models.CASCADE)
     birth_date        = models.DateField()
     nickname          = models.CharField(max_length=20)
     profile_image_url = models.URLField(max_length=200, null=True)
@@ -19,5 +19,11 @@ class User(models.Model):
 
     class Meta:
         db_table = 'users'
+
+class Gender(models.Model):
+    name = models.CharField(max_length=10)
+
+    class Meta:
+        db_table = 'genders'
 
 
