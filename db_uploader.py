@@ -54,7 +54,7 @@ with open(csv_path) as csv_file:
     rows = csv.reader(csv_file, delimiter=',')
     next(rows)
     for row in rows:
-        Brand.objects.create(name=row[0])
+        Brand.objects.create(name=row[0],image_url=row[1])
 
 csv_path = './csv_data/products.csv'
 with open(csv_path) as csv_file:
