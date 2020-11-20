@@ -1,9 +1,9 @@
-import jsos
+import json
 
 from django.http import JsonResponse
 from django.views import View
 
-from .models  import {
+from .models  import(
     FirstCategory,
     SecondCategory,
     ThirdCategory,
@@ -16,22 +16,67 @@ from .models  import {
     Stock,
     Product,
     ProductOotd
-    }
+    )
 
-class ProductListView(View):
+class FirstCategoryView(View):
     def get(self, request):
         try:
-            products = Product.objects.all()
-            price = products.price
-            discount_rate = products.discount_rate
-            discount_price = 'price * (discount_rate/100)'
+            data            = json.loads(request.body)
+            first_category  = FirstCategory.objects.get(id=data['id'])
+            second_category = SecondCategory.objects.get(id=data['id'])
+            third_category  = ThirdCategory.objects.get(id=data['id'])
 
-            product_list =[{
-                'brand' : products.brand,
-                'title' : products.title,
-                'price' : products.price,
-                'discount_rate' : products.discount_rate,
-                'main_image_url' : products.main_image_url
-                }for product in products_list.select_related('brand_set')]
+            if first_category:
+                first_category_list =[{
+                    'brand'          : product.brand.name,
+                    'title'          : product.title,
+                    'price'          : product.price,
+                    'discount_rate'  : product.discount_rate,
+                    'main_image_url' : product.main_image_url,
+                    'discount_price' : product.price * product.discount_rate
+                    }for product in first_category]
 
+                return JsonResponse({'message:':'SUCCESS', 'first_category':first_category_list}, status=200)
+        except Product.DoesNotExist:
+            return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
 
+class SecondCategoryView(View):
+    def get(self, request):
+        try:
+            data            = json.loads(request.body)
+            second_category = SecondCategory.objects.get(id=data['id'])
+
+            if second_category:
+                second_category_list =[{
+                    'brand'          : product.brand.name,
+                    'title'          : product.title,
+                    'price'          : product.price,
+                    'discount_rate'  : product.discount_rate,
+                    'main_image_url' : product.main_image_url,
+                    'discount_price' : product.price * product.discount_rate
+                    }for product in second_category]
+            return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
+
+        except Product.DoesNotExist:
+            return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
+
+class SecondCategoryView(View):
+    def get(self, request):
+        try:
+            data            = json.loads(request.body)
+            third_category  = ThirdCategory.objects.get(id=data['id'])
+
+            if third_category:
+                third_category_list=[{
+                    'brand'          : product.brand.name,
+                    'title'          : product.title,
+                    'price'          : product.price,
+                    'discount_rate'  : product.discount_rate,
+                    'main_image_url' : product.main_image_url,
+                    'discount_price' : product.price * product.discount_rate
+                    }for product in third_category]
+
+                return JsonResponse({'message:':'SUCCESS', 'third_category':third_category_list}, status=200)
+
+        except Product.DoesNotExist:
+            return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
