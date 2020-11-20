@@ -1,5 +1,6 @@
 import json
 import decimal
+import math
 
 from django.views    import View
 from django.http     import JsonResponse
@@ -13,15 +14,27 @@ class ProductDetail(View):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'message':'PRODUCT_NOT_FOUND'}, status=404)
 
-        product = Product.objects.select_related('brand').prefetch_related('brand__product_set','ootd', 'ootd__like_user', 'ootd__comment_set', 'ootd__user', 'color', 'size', 'stock_set', 'stock_set__color', 'stock_set__size', 'productimageurl_set').get(id=product_id)
+        product = Product.objects.select_related('brand').prefetch_related(
+            'brand__product_set',
+            'ootd',
+            'ootd__like_user',
+            'ootd__comment_set',
+            'ootd__user',
+            'color',
+            'size',
+            'stock_set',
+            'stock_set__color',
+            'stock_set__size',
+            'productimageurl_set'
+        ).get(id=product_id)
 
         return JsonResponse({
             'product' : {
-                'title' : product.title,
+                'title'               : product.title,
                 'main_image_url'      : product.main_image_url,
                 'discount_rate'       : product.discount_rate,
                 'product_price'       : product.price,
-                'discount_price'      : product.price - (product.price * product.discount_rate),
+                'discount_price'      : format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f'),
                 'product_like'        : product.like,
                 'product_ootd_counts' : product.ootd.count(),
                 'points'              : int(product.price - (product.price * product.discount_rate) * decimal.Decimal(0.05)),
