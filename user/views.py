@@ -14,6 +14,7 @@ class SignUpView(View):
             login_id  = data['login_id']
             password  = data['password']
             email     = data['email']
+            gender    = data['gender']
             profile_image_url = data.get('profile_image_url', "")
 
             id_pattern = '[a-z0-9]'
@@ -39,7 +40,7 @@ class SignUpView(View):
                 password          = hashed_password,
                 nickname          = data['nickname'],
                 email             = email,
-                gender_id         = int(data['gender_id']),
+                gender_id         = 1 if data['gender']=='남자' else 2,
                 birth_date        = data['birth_date'],
                 profile_image_url = profile_image_url
             )
