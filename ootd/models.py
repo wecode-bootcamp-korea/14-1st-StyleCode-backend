@@ -23,6 +23,7 @@ class Ootd(models.Model):
     class Meta:
         db_table = 'ootds'
 
+
 class OotdImageUrl(models.Model):
     image_url = models.URLField(max_length=200)
     ootd      = models.ForeignKey('Ootd', on_delete=models.CASCADE)
