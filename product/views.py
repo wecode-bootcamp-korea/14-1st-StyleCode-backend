@@ -1,6 +1,5 @@
 import json
 import decimal
-import math
 
 from django.views    import View
 from django.http     import JsonResponse
