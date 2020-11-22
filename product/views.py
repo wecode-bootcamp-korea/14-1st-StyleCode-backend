@@ -20,6 +20,7 @@ class ProductDetail(View):
             'ootd__like_user',
             'ootd__comment_set',
             'ootd__user',
+            'ootd__ootdimageurl_set',
             'color',
             'size',
             'stock_set',

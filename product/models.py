@@ -75,7 +75,7 @@ class Product(models.Model):
     model_name      = models.CharField(max_length=45)
     description     = models.TextField()
     discount_rate   = models.DecimalField(max_digits=3, decimal_places=2, null= True)
-    sales           = models.IntegerField(default=0)
+    sales_product   = models.IntegerField(default=0)
     main_image_url  = models.URLField(max_length=200)
     brand           = models.ForeignKey('Brand' , on_delete=models.CASCADE)
     color           = models.ManyToManyField('Color', through='ProductColor')
@@ -85,6 +85,7 @@ class Product(models.Model):
     second_category = models.ForeignKey('SecondCategory', on_delete=models.CASCADE)
     third_category  = models.ForeignKey('ThirdCategory', on_delete=models.CASCADE)
     ootd            = models.ManyToManyField('ootd.Ootd', through='ProductOotd')
+    created_at      = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'products'
