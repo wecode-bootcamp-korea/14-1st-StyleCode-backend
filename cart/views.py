@@ -30,7 +30,7 @@ class CartView(View):
 
         if Cart.objects.filter(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id).exists():
             cart = Cart.objects.get(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)
-            cart.quantity += quantity
+            cart.quantity = quantity
             cart.save()
             return JsonResponse({'message':'QUANTITY_ADD_SUCCESS'}, status=200)
 
@@ -54,14 +54,14 @@ class CartView(View):
             } for cart in user.user_cart.all()]
         })
 
-    def put(self, request):
+class CartDetailView(View):
+    def put(self, request, cart_id):
         data = json.loads(request.body)
         
-        if 'cart_id' not in data or 'quantity' not in data:
+        if 'quantity' not in data:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
 
         user_id = data['user_id']
-        cart_id = data['cart_id']
         quantity = data['quantity']
         
         if type(quantity) is not int:
@@ -75,14 +75,9 @@ class CartView(View):
         cart.save()
         return JsonResponse({'message':'SUCCESS'}, status=200)
 
-    def delete(self, request):
+    def delete(self, request, cart_id):
         data = json.loads(request.body)
-
-        if 'cart_id' not in data:
-            return JsonResponse({'message':'KEY_ERROR'}, status=400)
-
         user_id = data['user_id']
-        cart_id = data['cart_id']
 
         if not Cart.objects.filter(id=cart_id, user_id=user_id).exists():
             return JsonResponse({'message':'CART_DOES_NOT_EXISTS'}, status=404)
@@ -90,3 +85,5 @@ class CartView(View):
         cart = Cart.objects.get(id=cart_id, user_id=user_id)
         cart.delete()
         return JsonResponse({'message':'SUCCESS'}, status=200)
+
+
