@@ -18,8 +18,12 @@ from .models  import(
     Product,
     ProductOotd
     )
+ #class CategoryView(View):
+ #    def get(self, request):
+ #        try:
+ #            firstcategory = FirstCategory.objects.
 
-class CategoryView(View):
+class ProductView(View):
     def get(self, request):
         try:
             sort               = request.GET.get('sort', '0')
@@ -105,7 +109,7 @@ class MdChoiceView(View):
             'discount_rate'  : product.discount_rate,
             'main_image_url' : product.main_image_url,
             'discount_price' : format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-            }for product in products.order_by('?')[:8]]
+            }for product in products.order_by('?', 'sales_product')[:8]]
 
             return JsonResponse({'message:':'SUCCESS', 'mdchoice_list':mdchoice_list}, status=200)
         except Product.DoesNotExist:
