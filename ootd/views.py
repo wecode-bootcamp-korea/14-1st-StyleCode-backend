@@ -27,7 +27,7 @@ class OotdDetailRegisterView(View):
                 description = data['description'],
                 user = user
             )
-
+            # 태그 로직 (# 기준으로 split하여서 태그인 값만 걸러 태그 테이블에 추가)
             description_list = data['description'].split('#')
             for string in description_list[1:]:
                 if string[0] == ' ':
@@ -41,8 +41,6 @@ class OotdDetailRegisterView(View):
                 exist_tag = Tag.objects.get(tag_name = str('#'+tag))
                 OotdTag.objects.create(ootd =post, tag = exist_tag)
 
-            print(type(data['image_list']))
-
             if str(type(data['image_list'])) != "<class 'list'>":
                 return JsonResponse({'message' : 'TYPE_ERROR'}, status=400)
 
@@ -55,10 +53,10 @@ class OotdDetailRegisterView(View):
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
         
         except User.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status = 400)
         
         except Ootd.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
 
 
 class OotdDetailView(View):
@@ -99,8 +97,9 @@ class OotdDetailView(View):
                         }
                 
             return JsonResponse(ootd_post, status = 200)
+        
         except Ootd.DoesNotExist:
-            return JsonResponse({"MESSAGE" : "DOES_NOT_EXIST"}, status = 400)
+            return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)
 
 class OotdListlView(View):
     def get(self, request):
@@ -141,15 +140,15 @@ class OotdListlView(View):
             return JsonResponse({'ootd_list' : ootd_list}, status = 200)
         
         except Ootd.DoesNotExist:
-            return JsonResponse({"MESSAGE" : "DOES_NOT_EXIST"}, status = 400)   
+            return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)   
 
 class CommentView(View):
-    def post(self, request):
+    def post(self, request, ootd_id):
         data = json.loads(request.body)
 
         try:
             user = User.objects.get(id = data['user_id'])
-            post = Ootd.objects.get(id = data['ootd_id'])
+            post = Ootd.objects.get(id = ootd_id)
 
             Comment.objects.create(
                 content = data['content'],
@@ -163,7 +162,7 @@ class CommentView(View):
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
         except  Ootd.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
         
 
     def put(self, request):
@@ -180,7 +179,7 @@ class CommentView(View):
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
         
         except Comment.DoesNotExist:
-            return JsonResponse({ 'message' : 'INVALID_COMMENT'}, status = 400) 
+            return JsonResponse({ 'message' : 'COMMENT_DOES_NOT_EXIST'}, status = 400) 
 
     def delete(self, request):
         data = json.loads(request.body)
@@ -188,13 +187,10 @@ class CommentView(View):
         try:
             user = User.objects.get(id = data['user_id'])
             comment = Comment.objects.get(user = user, id = data['comment_id'])
-
-            comment.delete()
-
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
 
         except  Comment.DoesNotExist:
-            return JsonResponse({ 'message' : 'INVALID_COMMENT'}, status = 400)
+            return JsonResponse({ 'message' : 'COMMENT_DOES_NOT_EXIST'}, status = 400)
 
 class ReCommentView(View):
     def post(self, request):
@@ -211,7 +207,7 @@ class ReCommentView(View):
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
 
         except Comment.DoesNotExist:
-            return JsonResponse({"message" : "INVALID_COMMENT"}, status = 400)
+            return JsonResponse({"message" : "COMMENT_DOES_NOT_EXIST"}, status = 400)
 
     def put(self, request):
         data = json.loads(request.body)
@@ -223,11 +219,12 @@ class ReCommentView(View):
             comment.save()
 
             return JsonResponse({"message" : "SUCCESS"}, status = 200)
+        
         except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
 
         except Comment.DoesNotExist:
-            return JsonResponse({"message" : "INVALID_COMMENT"}, status = 400)
+            return JsonResponse({"message" : "COMMENT_DOES_NOT_EXIST"}, status = 400)
 
     def delete(self, request):
         data = json.loads(request.body)
@@ -243,19 +240,19 @@ class ReCommentView(View):
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
         
         except Comment.DoesNotExist:
-            return JsonResponse({"message" : "INVALID_COMMENT"}, status = 400)
+            return JsonResponse({"message" : "COMMENT_DOES_NOT_EXIST"}, status = 400)
 
 
 class LikeView(View):
-    def post(self, request):
+    def post(self, request, ootd_id):
         data = json.loads(request.body)
 
-        if Like.objects.filter(user = data['user_id'], ootd = data['ootd_id']):
+        if Like.objects.filter(user = data['user_id'], ootd = ootd_id):
             return JsonResponse({"message" : "OVERLAP_ERROR"}, status = 400)
 
         try:
             user = User.objects.get(id = data['user_id'])
-            post = Ootd.objects.get(id = data['ootd_id'])
+            post = Ootd.objects.get(id = ootd_id)
 
             Like.objects.create(
                 user = user,
@@ -268,17 +265,17 @@ class LikeView(View):
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
         except User.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status = 400)
 
         except Ootd.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
 
-    def delete(self, request):
+    def delete(self, request, ootd_id):
         data = json.loads(request.body)
 
         try:
             user = User.objects.get(id = data['user_id'])
-            post = Ootd.objects.get(id = data['ootd_id'])
+            post = Ootd.objects.get(id = ootd_id)
 
             Like.objects.get(user = user, ootd = post).delete()
 
@@ -287,11 +284,8 @@ class LikeView(View):
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
-        except User.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
-
         except Ootd.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
 
         except Like.DoesNotExist:
             return JsonResponse({"message" : "DOES_NOT_EXIST"})   
@@ -314,9 +308,6 @@ class FollowView(View):
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
-        except User.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
-
     def delete(self, request):
         data = json.loads(request.body)
 
@@ -332,4 +323,4 @@ class FollowView(View):
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
         except User.DoesNotExist:
-            return JsonResponse({'message' : 'DOES_NOT_EXIST'}, status = 400)
+            return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status = 400)
