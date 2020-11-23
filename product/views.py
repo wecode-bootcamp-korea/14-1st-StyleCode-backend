@@ -46,15 +46,15 @@ class ProductDetail(View):
                     'stock' : stock.stock_count
                 } for stock in product.stock_set.all()],
                 'headerBottomBrand'               : product.brand.name,
-                'brand_product_count' : product.brand.product_set.count(),
+                'brandProductCount' : product.brand.product_set.count(),
                 'headerBottomImg'     : product.brand.image_url,
                 'ootd'                : [{
                     'author'                   : ootd.user.nickname,
                     'authorImg' : ootd.user.profile_image_url,
                     'description'            : ootd.description,
-                    'ootd_image_url'         : [image.image_url for image in ootd.ootdimageurl_set.all()],
+                    'ootdImageUrl'         : [image.image_url for image in ootd.ootdimageurl_set.all()],
                     'like'                   : ootd.like_user.count(),
-                    'comment_count'          : ootd.comment_set.count()
+                    'commentCount'          : ootd.comment_set.count()
                 } for ootd in product.ootd.all()],
                 'articleProductDetailImgTitle'         : product.description,
                 'articleProductDetailImg'      : [image.image_url for image in product.productimageurl_set.all()]
