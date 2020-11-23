@@ -144,3 +144,4 @@ class OotdListTestCase(TestCase):
         ]})
         self.assertEqual(response.status_code, 200)
 
+

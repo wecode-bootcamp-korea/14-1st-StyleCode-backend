@@ -322,3 +322,4 @@ class FollowView(View):
 
         except User.DoesNotExist:
             return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status = 400)
+
