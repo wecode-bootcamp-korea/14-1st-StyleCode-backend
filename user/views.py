@@ -29,9 +29,9 @@ class SignUpView(View):
                 return JsonResponse ({'message:':'INVALID_PASSWORD'}, status=400)
 
             if User.objects.filter(email=email).exists():
-                return JsonResponse ({'message:':'ALREADY_EMAIL'}, status=400)
+                return JsonResponse ({'message:':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(nickname=data['nickname']).exists():
-                return JsonResponse ({'message':'ALREADY_NICKNAME'}, status=400)
+                return JsonResponse ({'message':'EXIST_NICKNAME'}, status=400)
 
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
@@ -44,9 +44,9 @@ class SignUpView(View):
                 birth_date        = data['birth_date'],
                 profile_image_url = profile_image_url
             )
-            return JsonResponse ({'message:':'CREATE_USER'}, status=200)
+            return JsonResponse ({'message:':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'KEY_ERROR'}, status=400)
+            return JsonResponse({'message:':'INVALID_KEYS'}, status=400)
 
 class LogInView(View):
     def post(self, request):
@@ -83,7 +83,7 @@ class ProfileView(View):
             }
             return JsonResponse ({'user_info:': user_info}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'KEY_ERROR'}, status=400)
+            return JsonResponse({'message:':'INVALID_KEYS'}, status=400)
 
     @Login_decorator
     def put(self, request):
@@ -107,6 +107,6 @@ class ProfileView(View):
 
             return JsonResponse({'message:':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'KEY_ERROR'}, status=400)
+            return JsonResponse({'message:':'INVALID_KEY'}, status=400)
 
 
