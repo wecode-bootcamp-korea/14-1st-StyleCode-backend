@@ -88,6 +88,7 @@ class ProfileView(View):
     @Login_decorator
     def put(self, request):
         try:
+            data = json.loads(request.body)
             user = request.user
 
             if 'country' in data:
