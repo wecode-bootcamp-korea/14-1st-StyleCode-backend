@@ -17,4 +17,4 @@ from django.urls import path, include
 
 urlpatterns = [
     path('ootds',include('ootd.urls'))
-
+]
