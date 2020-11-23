@@ -16,7 +16,6 @@ class Coupon(models.Model):
     limit_price   = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     limit_period  = models.DateTimeField(null=True)
 
-
     class Meta:
         db_table = 'coupons'
 
@@ -26,4 +25,3 @@ class UserCoupon(models.Model):
 
     class Meta:
         db_table = 'users_coupons'
-

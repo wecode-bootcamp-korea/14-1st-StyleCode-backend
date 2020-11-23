@@ -22,6 +22,7 @@ class ThirdCategory(models.Model):
 
 class Brand(models.Model):
     name            = models.CharField(max_length=30)
+    image_url       = models.URLField(max_length=200)
 
     class Meta:
         db_table = 'brands'
@@ -74,12 +75,14 @@ class Product(models.Model):
     model_name      = models.CharField(max_length=45)
     description     = models.TextField()
     discount_rate   = models.DecimalField(max_digits=3, decimal_places=2, null= True)
-    sales           = models.IntegerField(default=0)
-    main_image_url  = models.URLField(max_length=200, null=False)
+    sales_product   = models.IntegerField(default=0)
+    main_image_url  = models.URLField(max_length=200)
+    created_at       = models.DateTimeField(auto_now_add=True)
     brand           = models.ForeignKey('Brand' , on_delete=models.CASCADE)
     color           = models.ManyToManyField('Color', through='ProductColor')
     size            = models.ManyToManyField('Size', through='ProductSize')
     like            = models.IntegerField(default=0)
+    first_category  = models.ForeignKey('FirstCategory', on_delete=models.CASCADE)
     second_category = models.ForeignKey('SecondCategory', on_delete=models.CASCADE)
     third_category  = models.ForeignKey('ThirdCategory', on_delete=models.CASCADE)
     ootd            = models.ManyToManyField('ootd.Ootd', through='ProductOotd')
