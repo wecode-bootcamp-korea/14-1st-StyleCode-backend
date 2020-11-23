@@ -17,5 +17,5 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
-    path('ootd',include('ootd.urls'))
+    path('ootds',include('ootd.urls'))
 ]

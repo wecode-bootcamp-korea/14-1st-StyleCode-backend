@@ -3,7 +3,7 @@ from .views      import OotdDetailView, OotdListlView, CommentView, LikeView, Fo
 
 urlpatterns=[
     path('/<int:ootd_id>', OotdDetailView.as_view()),
-    path('/list', OotdListlView.as_view()),
+    path('', OotdListlView.as_view()),
     path('/<int:ootd_id>/comment', CommentView.as_view()),
     path('/<int:ootd_id>/like', LikeView.as_view()),
     path('/follow', FollowView.as_view()),
