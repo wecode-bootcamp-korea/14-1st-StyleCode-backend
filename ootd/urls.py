@@ -1,5 +1,5 @@
 from django.urls import path
-from .views      import OotdDetailView, OotdListlView, CommentView, LikeView, FollowView,OotdDetailRegisterView
+from .views      import OotdDetailView, OotdListlView, CommentView, LikeView, FollowView,OotdDetailRegisterView,ReCommentView
 
 urlpatterns=[
     path('/<int:ootd_id>', OotdDetailView.as_view()),
@@ -8,4 +8,5 @@ urlpatterns=[
     path('/like', LikeView.as_view()),
     path('/follow', FollowView.as_view()),
     path('/register', OotdDetailRegisterView.as_view()),
+    path('/reply', ReCommentView.as_view())
 ]
