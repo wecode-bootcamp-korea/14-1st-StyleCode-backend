@@ -40,7 +40,8 @@ class CartView(View):
     def get(self, request):
         data    = json.loads(request.body)
         user_id = data['user_id']
-        user    = User.objects.get(id=user_id)
+
+        user    = User.objects.prefetch_related('user_cart', 'user_cart__product', 'user_cart__size', 'user_cart__color').get(id=user_id)
 
         return JsonResponse({
             'product' : [{
