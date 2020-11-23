@@ -4,9 +4,7 @@ import decimal
 from django.views    import View
 from django.http     import JsonResponse
 
-from product.models  import Product, ProductColor, ProductImageUrl, ProductSize, Brand, Stock, Color
-from ootd.models     import Ootd, Like, Comment, OotdImageUrl
-from user.models     import User
+from product.models  import Product
 
 class ProductDetail(View):
     def get(self, request, product_id):
