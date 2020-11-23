@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=30)),
+                ('image_url', models.URLField()),
             ],
             options={
                 'db_table': 'brands',
@@ -53,9 +54,10 @@ class Migration(migrations.Migration):
                 ('model_name', models.CharField(max_length=45)),
                 ('description', models.TextField()),
                 ('discount_rate', models.DecimalField(decimal_places=2, max_digits=3, null=True)),
-                ('sales', models.IntegerField(default=0)),
+                ('sales_product', models.IntegerField(default=0)),
                 ('main_image_url', models.URLField()),
                 ('like', models.IntegerField(default=0)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('brand', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.brand')),
             ],
             options={
