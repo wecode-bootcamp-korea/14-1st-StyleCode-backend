@@ -15,7 +15,7 @@ class SignUpView(View):
             password  = data['password']
             email     = data['email']
             gender    = data['gender']
-            profile_image_url = data.get('profile_image_url', "")
+            profile_image_url = data.get('profile_image_url', None)
 
             id_pattern = '[a-z0-9]'
             email_pattern = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+'
@@ -81,7 +81,7 @@ class ProfileView(View):
                 'description'       : user.description,
                 'profile_image_url' : user.profile_image_url,
             }
-            return JsonResponse ({'user_info:': user_info}, status=400)
+            return JsonResponse ({'user_info:': user_info}, status=200)
         except KeyError:
             return JsonResponse({'message:':'KEY_ERROR'}, status=400)
 
@@ -94,7 +94,7 @@ class ProfileView(View):
             if 'country' in data:
                 user.country = data['country']
             if 'gender_id' in data:
-                user.gender = data['gender_id']
+                user.gender_id = 1 if data['gender'] == "남자" else 2 ,
             if 'birth_date' in data:
                 user.birth_date = data['birth_date']
             if 'website_url' in data:

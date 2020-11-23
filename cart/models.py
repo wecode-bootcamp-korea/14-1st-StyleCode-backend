@@ -5,6 +5,8 @@ class Cart(models.Model):
     product  = models.ForeignKey('product.Product', on_delete=models.CASCADE, related_name='product_cart')
     user     = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='user_cart')
     order    = models.ForeignKey('order.Order', on_delete=models.CASCADE, null=True)
+    color    = models.ForeignKey('product.Color' , on_delete=models.CASCADE)
+    size     = models.ForeignKey('product.Size' , on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'carts'
