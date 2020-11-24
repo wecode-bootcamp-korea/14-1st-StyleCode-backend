@@ -55,3 +55,5 @@ class Follow(models.Model):
     class Meta:
         db_table = 'follows'
 
+    class Meta:
+        db_table = 'follows'
