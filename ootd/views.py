@@ -80,8 +80,6 @@ class OotdlView(View):
                 tag =Tag.objects.get_or_create(tag_name=str('#'+tag))
                 post.tag.add(tag)
 
-                OotdTag.objects.create(ootd =post, tag = tag)
-
             if str(type(data['image_list'])) != "<class 'list'>":
                 return JsonResponse({'message' : 'TYPE_ERROR'}, status=400)
 
