@@ -25,5 +25,3 @@ class Gender(models.Model):
 
     class Meta:
         db_table = 'genders'
-
-
