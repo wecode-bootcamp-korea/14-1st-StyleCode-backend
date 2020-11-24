@@ -16,8 +16,8 @@ class Search(View):
             return JsonResponse({'message':'KEY_ERROR'}, status=400)        
 
         brands  = Brand.objects.filter(name__icontains=keyword)
-        products = Product.objects.filter(Q(title__icontains=keyword) | Q(description__icontains=keyword))
-        ootds   = Ootd.objects.filter(description__icontains=keyword)
+        products = Product.objects.filter(Q(title__icontains=keyword) | Q(description__icontains=keyword)).select_related('brand')
+        ootds   = Ootd.objects.filter(description__icontains=keyword).prefetch_related('user', 'ootdimageurl_set', 'like_user', 'comment_set', 'product_set')
         users = User.objects.filter(nickname__icontains=keyword)
 
         brand_list = [{
