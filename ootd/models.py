@@ -50,5 +50,10 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     follower  = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='from_user')
-    followee  = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='to_user')
+    followee = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='to_user')
 
+    class Meta:
+        db_table = 'follows'
+
+    class Meta:
+        db_table = 'follows'
