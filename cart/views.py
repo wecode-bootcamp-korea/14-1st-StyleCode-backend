@@ -6,15 +6,17 @@ from django.views   import View
 from user.models    import User
 from cart.models    import Cart
 from product.models import Product
+from user.utils     import Login_decorator
 
 class CartView(View):
+    @Login_decorator
     def post(self, request):
         data = json.loads(request.body)
 
         if 'product_id' not in data or 'color_id' not in data or 'size_id' not in data or 'quantity' not in data:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
 
-        user_id    = data['user_id']
+        user_id    = request.user.id
         product_id = data['product_id']
         color_id   = data['color_id']
         size_id    = data['size_id']
@@ -37,9 +39,9 @@ class CartView(View):
         Cart.objects.create(user_id=user_id, product_id=data['product_id'], size_id=size_id, color_id=color_id, quantity=quantity)
         return JsonResponse({'message':'SUCCESS'}, status=200)
 
+    @Login_decorator
     def get(self, request):
-        data    = json.loads(request.body)
-        user_id = data['user_id']
+        user_id = request.user.id
 
         user    = User.objects.prefetch_related('user_cart', 'user_cart__product', 'user_cart__size', 'user_cart__color').get(id=user_id)
 
@@ -58,13 +60,14 @@ class CartView(View):
         })
 
 class CartDetailView(View):
+    @Login_decorator
     def put(self, request, cart_id):
         data = json.loads(request.body)
         
         if 'quantity' not in data:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
 
-        user_id  = data['user_id']
+        user_id  = request.user.id
         quantity = data['quantity']
         
         if type(quantity) is not int:
@@ -78,9 +81,9 @@ class CartDetailView(View):
         cart.save()
         return JsonResponse({'message':'SUCCESS'}, status=200)
 
+    @Login_decorator
     def delete(self, request, cart_id):
-        data    = json.loads(request.body)
-        user_id = data['user_id']
+        user_id = request.user.id
 
         if not Cart.objects.filter(id=cart_id, user_id=user_id).exists():
             return JsonResponse({'message':'CART_DOES_NOT_EXISTS'}, status=404)
