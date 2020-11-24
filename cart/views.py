@@ -29,8 +29,8 @@ class CartView(View):
             return JsonResponse({'message':'BAD_REQUEST'}, status=400)
 
         if Cart.objects.filter(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id).exists():
-            cart          = Cart.objects.get(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)
-            cart.quantity = quantity
+            cart           = Cart.objects.get(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)
+            cart.quantity += quantity
             cart.save()
             return JsonResponse({'message':'QUANTITY_ADD_SUCCESS'}, status=200)
 
@@ -45,13 +45,15 @@ class CartView(View):
 
         return JsonResponse({
             'product' : [{
+                'cart_id'        : cart.id,
                 'product'        : cart.product.title,
                 'product_image'  : cart.product.main_image_url,
                 'color'          : cart.color.name,
                 'size'           : cart.size.name,
                 'quantity'       : cart.quantity,
                 'product_price'  : cart.product.price,
-                'discount_price' : format(int(round(cart.product.price-(cart.product.price * cart.product.discount_rate),-2)),'.2f')
+                'discount_price' : format(int(round(cart.product.price-(cart.product.price * cart.product.discount_rate),-2)),'.2f'),
+                'shipping_price' : 2500.00
             } for cart in user.user_cart.all()]
         })
 
