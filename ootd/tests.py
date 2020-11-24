@@ -88,6 +88,7 @@ class OotdListTestCase(TestCase):
             user_id = 1
         )
         self.client = Client()
+        
     def tearDown(self):
         pass
   

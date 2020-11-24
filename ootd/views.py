@@ -69,19 +69,17 @@ class OotdlView(View):
                 description = data['description'],
                 user = user
             )
-            # 태그 로직 (# 기준으로 split하여서 태그인 값만 걸러 태그 테이블에 추가)
+            # 태그 로직 (# 기준으로 split하여서 태그인 값만 걸러 중간 테이블에 추가)
             description_list = data['description'].split('#')
             for string in description_list[1:]:
                 if string[0] == ' ':
                     continue
                 tag = string.split()[0]
 
-                if not Tag.objects.filter(tag_name=str('#'+tag)).exists():
-                    tag =Tag.objects.create(tag_name=str('#'+tag))
-                    OotdTag.objects.create(ootd =post, tag = tag)
-                
-                exist_tag = Tag.objects.get(tag_name = str('#'+tag))
-                OotdTag.objects.create(ootd =post, tag = exist_tag)
+                tag =Tag.objects.get_or_create(tag_name=str('#'+tag))
+                post.tag.add(tag)
+
+                OotdTag.objects.create(ootd =post, tag = tag)
 
             if str(type(data['image_list'])) != "<class 'list'>":
                 return JsonResponse({'message' : 'TYPE_ERROR'}, status=400)
@@ -109,9 +107,10 @@ class OotdlView(View):
                 'product_set',
                 'tag'
             )
-
+            offset    = request.GET.get('offset',0)
+            limit     = request.GET.get('limit', 5)
             ootd_list = [
-                {
+                {   'id'                : post.id,
                     'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
                     'productImg'        : [product_image.main_image_url for product_image in post.product_set.all()],
                     'productName'       : [product_name.title for product_name in post.product_set.all()],
@@ -127,14 +126,13 @@ class OotdlView(View):
                     'comments'          : [
                             {
                                 'commentAuthor'    : comment.user.nickname,
-                                'commentAuthorImg' : comment.user.profile_image_url,
+                                'commentAuthorImg' : comment.user.profile_image_url if comment.user.profile_image_url else "https://staticassets-a.styleshare.io/c70c244d8d/img/profilepics/profile_140x140.png",
                                 'comment'          : comment.content,
                                 'parent_id'        : comment.parent_id
                             } for comment in post.comment_set.all()[:2]
-                                        ]
-                } for post in posts
+                                         ]
+                } for post in posts[int(offset):int(limit)]
             ]
-
             return JsonResponse({'ootd_list' : ootd_list}, status = 200)
         
         except Ootd.DoesNotExist:
@@ -200,7 +198,7 @@ class CommentView(View):
 
         try:
             user = User.objects.get(id = data['user_id'])
-            comment = Comment.objects.get(user = user, id = comment_id).delete()
+            Comment.objects.get(user = user, id = comment_id).delete()
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
 
         except  Comment.DoesNotExist:
