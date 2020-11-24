@@ -92,7 +92,7 @@ class CategoryView(View):
             }for first_category in first_categories]
 
             return JsonResponse({ 'message:':'SUCCESS', 'categories':categories}, status=200)
-        except :
+        except Category.DoesNotExist :
             return JsonResponse({'message:':'INVALID_CATEGORY'}, status=400)
 
 
@@ -120,7 +120,7 @@ class ProductView(View):
                 }
                 sorting =[
                 {   'id' : 0,
-                   'name' : '최신순'},
+                  'name' : '최신순'},
                 {   'id' : 1,
                   'name' : '인기순'},
                 {   'id' : 2,
@@ -173,16 +173,17 @@ class ProductView(View):
 class MdChoiceView(View):
     def get (self,request):
         try :
-            products = Product.objects.select_related('third_category','second_category','second_category__first_category','brand')
+            products = Product.objects.select_related('third_category','second_category__first_category','brand')
 
             mdchoice_list = [{
+            'id'             : product.id,
             'brand'          : product.brand.name,
             'title'          : product.title,
             'price'          : product.price,
             'discount_rate'  : product.discount_rate,
             'main_image_url' : product.main_image_url,
             'discount_price' : format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-            }for product in products.order_by('?', 'sales_product')[:8]]
+            }for product in products[:24]]
 
             return JsonResponse({'message:':'SUCCESS', 'mdchoice_list':mdchoice_list}, status=200)
         except Product.DoesNotExist:
