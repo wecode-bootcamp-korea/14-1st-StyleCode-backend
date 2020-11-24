@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('products', include('product.urls')),
-    path('carts', include('cart.urls'))
+    path('carts', include('cart.urls')),
+    path('search', include('search.urls'))
+
 ]
