@@ -1,4 +1,4 @@
-import json, jwt, requests, re, bcrypt
+import json, jwt, re, bcrypt
 
 from django.http           import JsonResponse
 from django.views          import View
@@ -24,12 +24,12 @@ class SignUpView(View):
             if not re.search(id_pattern, login_id) or len(login_id) > 30 or len(login_id)< 3:
                 return JsonResponse ({'message':'INVALID_ID'}, status=400)
             if not re.match(email_pattern, email):
-                return JsonResponse ({'message:':'INVALID_EMAIL'}, status=400)
+                return JsonResponse ({'message':'INVALID_EMAIL'}, status=400)
             if not re.search(password_pattern, password) or len(password) > 16 or len(password) < 8:
-                return JsonResponse ({'message:':'INVALID_PASSWORD'}, status=400)
+                return JsonResponse ({'message':'INVALID_PASSWORD'}, status=400)
 
             if User.objects.filter(email=email).exists():
-                return JsonResponse ({'message:':'EXIST_EMAIL'}, status=400)
+                return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(nickname=data['nickname']).exists():
                 return JsonResponse ({'message':'EXIST_NICKNAME'}, status=400)
 
@@ -44,9 +44,9 @@ class SignUpView(View):
                 birth_date        = data['birth_date'],
                 profile_image_url = profile_image_url
             )
-            return JsonResponse ({'message:':'SUCCESS'}, status=200)
+            return JsonResponse ({'message':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'INVALID_KEYS'}, status=400)
+            return JsonResponse({'message':'INVALID_KEYS'}, status=400)
 
 class LogInView(View):
     def post(self, request):
@@ -60,11 +60,11 @@ class LogInView(View):
                 token = jwt.encode({'login_id':login_id}, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM).decode('utf-8')
 
                 return JsonResponse({'token':token}, status=200)
-            return JsonResponse({'message:':'INVALID_PASSWORD'}, status=400)
+            return JsonResponse({'message':'INVALID_PASSWORD'}, status=400)
         except KeyError:
-            return JsonResponse({'message:':'INVALID_ID'}, status=400)
+            return JsonResponse({'message':'INVALID_ID'}, status=400)
         except User.DoesNotExist:
-            return JsonResponse({'message:':'USER_DOES_NOT_EXIST'}, status=400)
+            return JsonResponse({'message':'USER_DOES_NOT_EXIST'}, status=400)
 
 class ProfileView(View):
     @Login_decorator
@@ -83,7 +83,7 @@ class ProfileView(View):
             }
             return JsonResponse ({'user_info:': user_info}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'INVALID_KEYS'}, status=400)
+            return JsonResponse({'message':'INVALID_KEYS'}, status=400)
 
     @Login_decorator
     def put(self, request):
@@ -105,6 +105,6 @@ class ProfileView(View):
                 user.profile_image_url = data['profile_image_url']
             user.save()
 
-            return JsonResponse({'message:':'SUCCESS'}, status=200)
+            return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'INVALID_KEY'}, status=400)
+            return JsonResponse({'message':'INVALID_KEY'}, status=400)

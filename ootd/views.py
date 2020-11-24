@@ -1,9 +1,10 @@
 # Python
 import json
+from user.utils import Login_decorator
 
 # Django
 from django.views     import View
-from django.http      import JsonResponse,request
+from django.http      import JsonResponse
 from django.db.models import Q
 
 # Models
@@ -139,16 +140,16 @@ class OotdlView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)   
 
 class OotdCommentView(View):
+    @Login_decorator
     def post(self, request, ootd_id):
         data = json.loads(request.body)
 
         try:
-            user = User.objects.get(id = data['user_id'])
             post = Ootd.objects.get(id = ootd_id)
 
             Comment.objects.create(
                 content = data['content'],
-                user = user,
+                user = request.user,
                 ootd = post
                 )
 
@@ -161,13 +162,14 @@ class OotdCommentView(View):
             return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
         
 class CommentView(View):
+    @Login_decorator
     def post(self, request, comment_id):
         data   = json.loads(request.body)
+
         try:
-            user    = User.objects.get(id = data['user_id'])
             comment = Comment.objects.get(id = comment_id)
 
-            Comment.objects.create(user = user, content = data['content'], ootd=comment.ootd, parent = comment)
+            Comment.objects.create(user = request.user, content = data['content'], ootd=comment.ootd, parent = comment)
 
             return JsonResponse({"message" : "SUCCESS"},status = 200)
 
@@ -176,13 +178,12 @@ class CommentView(View):
 
         except Comment.DoesNotExist:
             return JsonResponse({"message" : "COMMENT_DOES_NOT_EXIST"}, status = 400)
-
+    @Login_decorator
     def put(self, request, comment_id):
         data = json.loads(request.body)
 
         try:
-            user = User.objects.get(id = data['user_id'])
-            comment = Comment.objects.get(user=user, id = comment_id)
+            comment = Comment.objects.get(user=request.user, id = comment_id)
 
             comment.content = data['content']
 
@@ -193,23 +194,21 @@ class CommentView(View):
         except Comment.DoesNotExist:
             return JsonResponse({ 'message' : 'COMMENT_DOES_NOT_EXIST'}, status = 400) 
 
+    @Login_decorator
     def delete(self, request, comment_id):
-        data = json.loads(request.body)
-
         try:
-            user = User.objects.get(id = data['user_id'])
-            Comment.objects.get(user = user, id = comment_id).delete()
+            Comment.objects.get(user = request.user, id = comment_id).delete()
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
 
         except  Comment.DoesNotExist:
             return JsonResponse({ 'message' : 'COMMENT_DOES_NOT_EXIST'}, status = 400)
 
 class ReCommentView(View):
+    @Login_decorator
     def put(self, request, reply_id):
         data = json.loads(request.body)
         try:
-            user    = User.objects.get(id = data['user_id'])
-            comment = Comment.objects.get(id= reply_id, user=user)
+            comment = Comment.objects.get(id= reply_id, user=request.user)
             
             comment.content = data['content']
             comment.save()
@@ -221,12 +220,11 @@ class ReCommentView(View):
 
         except Comment.DoesNotExist:
             return JsonResponse({"message" : "COMMENT_DOES_NOT_EXIST"}, status = 400)
-
+    
+    @Login_decorator
     def delete(self, request, reply_id):
-        data = json.loads(request.body)
         try:
-            user    = User.objects.get(id = data['user_id'])
-            comment = Comment.objects.get(id = reply_id, user = user)
+            comment = Comment.objects.get(id = reply_id, user = request.user)
 
             comment.delete()
 
@@ -240,18 +238,17 @@ class ReCommentView(View):
 
 
 class LikeView(View):
+    @Login_decorator
     def post(self, request, ootd_id):
-        data = json.loads(request.body)
 
-        if Like.objects.filter(user = data['user_id'], ootd = ootd_id):
+        if Like.objects.filter(user = request.user, ootd = ootd_id):
             return JsonResponse({"message" : "OVERLAP_ERROR"}, status = 400)
 
         try:
-            user = User.objects.get(id = data['user_id'])
             post = Ootd.objects.get(id = ootd_id)
 
             Like.objects.create(
-                user = user,
+                user = request.user,
                 ootd = post
             )
 
@@ -265,20 +262,15 @@ class LikeView(View):
 
         except Ootd.DoesNotExist:
             return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
-
+    
+    @Login_decorator
     def delete(self, request, ootd_id):
-        data = json.loads(request.body)
-
         try:
-            user = User.objects.get(id = data['user_id'])
             post = Ootd.objects.get(id = ootd_id)
 
-            Like.objects.get(user = user, ootd = post).delete()
+            Like.objects.get(user = request.user, ootd = post).delete()
 
             return JsonResponse({"message" : "SUCCESS"}, status = 200)
-
-        except KeyError:
-            return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
         except Ootd.DoesNotExist:
             return JsonResponse({'message' : 'OOTD_DOES_NOT_EXIST'}, status = 400)
@@ -287,31 +279,27 @@ class LikeView(View):
             return JsonResponse({"message" : "DOES_NOT_EXIST"})   
 
 class FollowView(View):
+    @Login_decorator
     def post(self, request, followee_id):
-        data = json.loads(request.body)
-
-        if Follow.objects.filter(followee = followee_id, follower = data['follower_id']):
+        if Follow.objects.filter(followee = followee_id, follower = request.user):
             return JsonResponse({"message" : "OVERLAP_ERROR"}, status = 400)
 
         try:
             followee = User.objects.get(id = followee_id)
-            follower = User.objects.get(id = data['follower_id'])
 
-            Follow.objects.create(followee = followee, follower = follower)
+            Follow.objects.create(followee = followee, follower = request.user)
 
             return JsonResponse({"message" : "SUCCESS"}, status = 200)
 
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
+    @Login_decorator
     def delete(self, request, followee_id):
-        data = json.loads(request.body)
-
         try:
             followee = User.objects.get(id = followee_id)
-            follower = User.objects.get(id = data['follower_id'])
 
-            Follow.objects.get(followee = followee, follower = follower).delete()
+            Follow.objects.get(followee = followee, follower = request.user).delete()
 
             return JsonResponse({"message" : "SUCCESS"}, status = 200)
         
@@ -320,4 +308,3 @@ class FollowView(View):
 
         except User.DoesNotExist:
             return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status = 400)
-
