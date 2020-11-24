@@ -20,10 +20,10 @@ from .models  import(
     )
 class CategoryView(View):
     def get(self, request):
-        try:
+       # try:
             first_categories = FirstCategory.objects.prefetch_related('secondcategory_set__thirdcategory_set')
             print (first_categories)
-            categories = [{
+            cetegories = [{
                  'id'  : first_category.id,
                 'name' : first_category.name,
                 'second_category' : [{
@@ -32,13 +32,13 @@ class CategoryView(View):
                      'third_category': [{
                            'id' : third_category.id,
                          'name' : third_category.name,
-                     }for third_category in second_category.thirdcategory_set.all()]
+                     }for third_category in first_category.secondcategory_set__thirdcategory_set.all()]
                  }for second_category in first_category.secondcategory_set.all()]
             }for first_category in first_categories]
 
             return JsonResponse({ 'message:':'SUCCESS', 'categories':categories}, status=200)
-        except :
-            return JsonResponse({'message:':'INVALID_CATEGORY'}, status=400)
+       # except :
+        #    return JsonResponse({'message:':'INVALID_CATEGORY'}, status=400)
 
 
 class ProductView(View):
