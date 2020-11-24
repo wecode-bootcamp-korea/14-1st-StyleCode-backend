@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('discount_rate', models.DecimalField(decimal_places=2, max_digits=3, null=True)),
                 ('sales_product', models.IntegerField(default=0)),
-                ('main_image_url', models.URLField()),
+                ('main_image_url', models.URLField(null=True)),
                 ('like', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('brand', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.brand')),
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=15)),
-                ('first_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.firstcategory')),
+                ('first_category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='product.firstcategory')),
             ],
             options={
                 'db_table': 'second_categories',

@@ -10,8 +10,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('cart', '0001_initial'),
         ('user', '0001_initial'),
+        ('cart', '0001_initial'),
     ]
 
     operations = [
