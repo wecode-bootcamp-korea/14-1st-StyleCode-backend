@@ -2,7 +2,9 @@ import json
 
 from django.http import JsonResponse
 from django.views import View
+
 from user.utils import Login_decorator
+from .utils import coupon_check
 
 class OrderView(View):
     pass
@@ -13,6 +15,7 @@ class OrderView(View):
 #        if 'cart' not in data:
 #            return JsonResponse({'message':'KEY_ERROR'},status=400)
 #        user = request.user
+#        coupons = coupon_check(user)
 #        orderer_info = OrdererInformation.objects.filter(user=user)
 #        order_request = OrderRequest.objects.all()
 #        carts = Cart.objects.filter(id__in=data['cart'])
@@ -29,7 +32,7 @@ class OrderView(View):
 #                    'color' : cart.product.color.name,
 #                    'quantity' : cart.quantity,
 #                    } for cart in carts]
-#                'coupon' : [coupon.name for coupon in user.coupon.all()],
+#                'coupon' : [coupon.name for coupon in coupons],
 #                'points' : user.point
 #            }
 #        })
@@ -55,10 +58,14 @@ class OrderView(View):
 #
 #       if address_save_check:           
 #           user.address = address
-#
+#        
+#       Order.objects.create(
+#           address=address,
+#           orderer_name=orderer_name,
+#           
+#    
 #
 
-        pass 
 
 class OrderedView(View):
     @Login_decorator
