@@ -16,6 +16,7 @@ class SignUpView(View):
             email     = data['email']
             gender    = data['gender']
             profile_image_url = data.get('profile_image_url', None)
+            print (data)
 
             id_pattern = '[a-z0-9]'
             email_pattern = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+'
@@ -107,4 +108,4 @@ class ProfileView(View):
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message':'INVALID_KEY'}, status=400)
+            return JsonResponse({'message:':'INVALID_KEY'}, status=400)
