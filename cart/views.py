@@ -41,18 +41,21 @@ class CartView(View):
     
     @Login_decorator
     def get(self, request):
-        user    = request.user
+        user_id = request.user.id
+
+        user    = User.objects.prefetch_related('user_cart', 'user_cart__product', 'user_cart__size', 'user_cart__color').get(id=user_id)
 
         return JsonResponse({
             'product' : [{
-                'product_title'  : cart.product.title,
+                'cart_id'        : cart.id,
+                'product'        : cart.product.title,
                 'product_image'  : cart.product.main_image_url,
                 'color'          : cart.color.name,
                 'size'           : cart.size.name,
                 'quantity'       : cart.quantity,
                 'product_price'  : cart.product.price,
                 'discount_price' : int(round(cart.product.price-(cart.product.price * cart.product.discount_rate),-2)),
-                'shipping_fee'   : 2500,
+                'shipping_fee'   : 2500
             } for cart in user.user_cart.all()]
         },status=200)
 
