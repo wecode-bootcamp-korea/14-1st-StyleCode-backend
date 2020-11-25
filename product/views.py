@@ -3,7 +3,7 @@ import decimal
 
 from django.views    import View
 from django.http     import JsonResponse
-from django.db.models import Q
+from django.db.models import Q,F
 
 from product.models  import(
     FirstCategory,
@@ -77,7 +77,7 @@ class CategoryView(View):
     def get(self, request):
         try:
             first_categories = FirstCategory.objects.prefetch_related('secondcategory_set__thirdcategory_set')
-            print (first_categories)
+
             categories = [{
                 'id'   : first_category.id,
                 'name' : first_category.name,
@@ -91,7 +91,7 @@ class CategoryView(View):
                 }for second_category in first_category.secondcategory_set.all()]
             }for first_category in first_categories]
 
-            return JsonResponse({ 'message:':'SUCCESS', 'categories':categories}, status=200)
+            return JsonResponse({ 'categories':categories}, status=200)
         except Category.DoesNotExist :
             return JsonResponse({'message:':'INVALID_CATEGORY'}, status=400)
 
@@ -103,11 +103,11 @@ class ProductView(View):
             first_category_id  = request.GET.get('first')
             second_category_id = request.GET.get('second')
             third_category_id  = request.GET.get('third')
-            products           = Product.objects.filter(
+            products           = Product.objects.select_related('third_category','second_category__first_category','brand').filter(
                 Q(first_category_id=first_category_id)|
                 Q(second_category_id=second_category_id)|
                 Q(third_category_id=third_category_id)
-            ).select_related('third_category','second_category','second_category__first_category','brand')
+            )
 
             if sort :
 
@@ -115,8 +115,8 @@ class ProductView(View):
                     '0' : '-created_at',
                     '1' : '-sales_product',
                     '2' : '-discount_rate',
-                    '3' : 'price',
-                    '4' : '-price'
+                    '3' : 'discount_price',
+                    '4' : '-discount_price'
                 }
                 sorting =[
                 {   'id' : 0,
@@ -131,17 +131,16 @@ class ProductView(View):
                   'name' : '가격 높은순'}
                 ]
 
-            if first_category_id:
-                first_category_list =[{
+                category_list =[{
                     'brand'          : product.brand.name,
                     'title'          : product.title,
                     'price'          : product.price,
                     'discount_rate'  : product.discount_rate,
                     'main_image_url' : product.main_image_url,
-                    'discount_price' :format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-                    }for product in products.order_by(sort_type[sort])]
+                    'discount_price' : product.discount_price
+                    }for product in products.annotate(discount_price=F('price') - F('price')*('discount_rate')).order_by(sort_type[sort])]
 
-                return JsonResponse({'message:':'SUCCESS', 'first_category_list':first_category_list, 'sorting':sorting}, status=200)
+                return JsonResponse({'category_list':category_list, 'sorting':sorting}, status=200)
 
             if second_category_id:
                 second_category_list =[{
@@ -171,8 +170,11 @@ class ProductView(View):
             return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
 
 class MdChoiceView(View):
-    def get (self,request):
+    def get (self,request, mdchoice):
         try :
+            offset = [0,8,16]
+            limit  = [8,16,24]
+
             products = Product.objects.select_related('third_category','second_category__first_category','brand')
 
             mdchoice_list = [{
@@ -183,7 +185,7 @@ class MdChoiceView(View):
             'discount_rate'  : product.discount_rate,
             'main_image_url' : product.main_image_url,
             'discount_price' : format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-            }for product in products[:24]]
+            }for product in products[offset[mdchoice]:limit[mdchoice]]]
 
             return JsonResponse({'message:':'SUCCESS', 'mdchoice_list':mdchoice_list}, status=200)
         except Product.DoesNotExist:
