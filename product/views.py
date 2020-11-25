@@ -2,10 +2,9 @@ import json
 import decimal
 
 from django.views    import View
-from django.db.models import F
 from django.http     import JsonResponse
 
-from product.models  import Product, FirstCategory, SecondCategory, ThirdCategory
+from product.models  import Product
 
 class ProductDetailView(View):
     def get(self, request, product_id):
