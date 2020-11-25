@@ -2,76 +2,127 @@ import json
 
 from django.http import JsonResponse
 from django.views import View
+from django.db import transaction
 
 from user.utils import Login_decorator
-from .utils import coupon_check
+from order.utils import coupon_check, order_number_create
+from order.models import OrdererInformation, Order, OrderRequest, OrderStatus
+from cart.models import Cart
 
 class OrderView(View):
-    pass
+    @Login_decorator
+    def get(self, request):
+        data = json.loads(request.body)
+        user = request.user
 
-#    @Login_decorator
-#    def get(self, request):
-#        data = json.loads(request.body)
-#        if 'cart' not in data:
-#            return JsonResponse({'message':'KEY_ERROR'},status=400)
-#        user = request.user
-#        coupons = coupon_check(user)
-#        orderer_info = OrdererInformation.objects.filter(user=user)
-#        order_request = OrderRequest.objects.all()
-#        carts = Cart.objects.filter(id__in=data['cart'])
-#        return JsonResponse({
-#            'order' : {
-#                'user_info' : orderer_info,
-#                'address' : user.address,
-#                'order_request' : [request for request in order_request],
-#                'products' : [{
-#                    'title' : cart.product.title,
-#                    'price' : cart.product.price,
-#                    'discount_price' : format(int(round(cart.product.price - (cart.product.price * cart.product.discount_rate),-2)),'.2f'),
-#                    'size' : cart.product.size.name,
-#                    'color' : cart.product.color.name,
-#                    'quantity' : cart.quantity,
-#                    } for cart in carts]
-#                'coupon' : [coupon.name for coupon in coupons],
-#                'points' : user.point
-#            }
-#        })
+        if 'cart_ids' not in data:
+            return JsonResponse({'message':'KEY_ERROR'},status=400)
 
+        coupons       = coupon_check(user)
+        orderer_info  = OrdererInformation.objects.filter(user=user)
+        order_request = OrderRequest.objects.all()
+        carts         = Cart.objects.filter(id__in=data['cart_ids'])
+
+        return JsonResponse({
+            'order' : {
+                'orderer_info'  : {
+                    'orderer_name'          : orderer_info.orderer_name,
+                    'orderer_email'         : orderer_info.orderer_email,
+                    'orderer_phone_number'  : orderer_info.orderer_phone_number
+                } if orderer_info else None,
+                'address'       : user.address,
+                'order_request' : [{
+                    'order_request_id' : request.id,
+                    'order_request'    : request.request
+                } for request in order_request],
+                'products'      : [{
+                    'cart_id'          : cart.id,
+                    'title'            : cart.product.title,
+                    'price'            : cart.product.price,
+                    'discount_price'   : int(round(cart.product.price - (cart.product.price * cart.product.discount_rate),-2)),
+                    'size'             : cart.size.name,
+                    'color'            : cart.color.name,
+                    'quantity'         : cart.quantity,
+                    } for cart in carts],
+                'coupon'        : [{
+                    'coupon_id'        : coupon.id,
+                    'coupon_name'      : coupon.name
+                } for coupon in coupons],
+                'points'        : user.point
+            }
+        })
+
+    @transaction.atomic
     @Login_decorator
     def post(self, request):
-#       data = json.loads(request.body)
-#       orderer_name = data['orderer_name'] 
-#       orderer_phone = data['orderer_phone']
-#       orderer_email = data['orderer_email']
-#       orderer_save_check = data['orderer_save_check']
-#       recipient_name = data['recipient_name']
-#       recipient_phone = data['recipient_phone']
-#       address = data['address']
-#       address_save_check = data['address_save_check']
-#       order_request = data.get(order_request)
-#       self_request = data.get(self_request)
-#       coupon = data.get(coupon)
-#       point = data['point']
-#       
-#       if orderer_save_check:
-#           orderer_info = OrdererInformation.objects.update_or_create(user=user, defaults={'orderer_email':orerer_email,'orderer_phone':orderer_phone,'orderer_name':orderer_name})
-#
-#       if address_save_check:           
-#           user.address = address
-#        
-#       Order.objects.create(
-#           address=address,
-#           orderer_name=orderer_name,
-#           
-#    
-#
+        data         = json.loads(request.body)
+        user         = request.user
+        
+        required_key = { 
+            'orderer_name',
+            'orderer_phone_number',
+            'orderer_email',
+            'orderer_save_check',
+            'recipient_name',
+            'recipient_phone_number',
+            'address',
+            'address_save_check',
+            'point',
+            'cart_ids'
+        }
 
+        for key in required_key:
+            if key not in data:
+                return JsonResponse({'message':'KEY_ERROR'}, status=400)
+        
+        cart_ids               = data['cart_ids']
+        orderer_name           = data['orderer_name']
+        orderer_phone_number   = data['orderer_phone_number']
+        orderer_email          = data['orderer_email']
+        orderer_save_check     = data['orderer_save_check']
+        recipient_name         = data['recipient_name']
+        recipient_phone_number = data['recipient_phone_number']
+        address                = data['address']
+        address_save_check     = data['address_save_check']
+        point                  = data['point']
+        order_request_id       = data.get('order_request')
+        self_request           = data.get('self_request')
+        coupon_id              = data.get('coupon_id')
+        order_number           = order_number_create()
+        
+        for cart_id in cart_ids:
+            if not Cart.objects.filter(id=cart_id).exists():
+                return JsonResponse({'message':'CART_NOT_FOUND'},status=404)
 
-class OrderedView(View):
-    @Login_decorator
-    def get(self, request, order_id):
-        pass
+        if orderer_save_check:
+            OrdererInformation.objects.update_or_create(user=user, defaults={
+                    'orderer_email'        : orderer_email,
+                    'orderer_phone_number' : orderer_phone_number,
+                    'orderer_name'         : orderer_name
+                })
 
-    def delete(self,request, order_id):
-        pass
+        if address_save_check:           
+            user.address = address
+        
+        order_id = Order.objects.create(
+            address                = address,
+            orderer_name           = orderer_name,
+            orderer_phone_number   = orderer_phone_number,
+            orderer_email          = orderer_email,
+            order_number           = order_number,
+            recipient_name         = recipient_name,
+            recipient_phone_number = recipient_phone_number,
+            user                   = user,
+            coupon_id              = coupon_id if coupon_id else None,
+            order_status           = OrderStatus.objects.get(order_status='주문완료'),
+            order_request_id       = order_request_id if order_request_id else None,
+            self_request           = self_request if self_request else None
+        ).pk
 
+        if coupon_id:
+            user.coupon.delete(id=coupon_id)
+
+        for cart_id in cart_ids:
+            Cart.objects.get(id=cart_id).order_id = order_id 
+
+        return JsonResponse({'message':'SUCCESS'},status=200)
