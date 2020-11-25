@@ -8,7 +8,6 @@ class OrderStatus(models.Model):
 
 class OrderRequest(models.Model):
     request      = models.CharField(max_length=50, null=True)
-    self_request = models.CharField(max_length=50, null=True)
 
     class Meta:
         db_table = 'order_requests'
@@ -48,6 +47,7 @@ class Order(models.Model):
     coupon                 = models.ForeignKey('cart.Coupon', on_delete=models.CASCADE)
     order_status           = models.ForeignKey('OrderStatus', on_delete=models.CASCADE)
     order_request          = models.ForeignKey('OrderRequest', on_delete=models.CASCADE)
+    self_request           = models.CharField(max_length=50, null=True)
 
     class Meta:
         db_table = 'orders'
