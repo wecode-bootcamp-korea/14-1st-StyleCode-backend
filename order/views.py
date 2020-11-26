@@ -21,7 +21,7 @@ class OrderView(View):
         coupons       = coupon_check(user)
         orderer_info  = OrdererInformation.objects.filter(user=user)
         order_request = OrderRequest.objects.all()
-        carts         = Cart.objects.filter(id__in=data['cart_ids']).select_related('size','color')
+        carts         = Cart.objects.filter(id__in=data['cart_ids']).select_related('size','color','product')
 
         return JsonResponse({
             'order' : {
@@ -121,7 +121,7 @@ class OrderView(View):
             recipient_phone_number = recipient_phone_number,
             user                   = user,
             coupon_id              = coupon_id        if coupon_id else None,
-            order_status_id        = ORDER_STATUTS_COPLETE,
+            order_status_id        = ORDER_STATUS_COMPLETE,
             order_request_id       = order_request_id if order_request_id else None,
             self_request           = self_request     if self_request else None
         ).pk

@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views      import ProductDetailView, CategoryView, ProductView, MdChoiceView
 
 urlpatterns = [
