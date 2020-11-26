@@ -29,6 +29,8 @@ class SignUpView(View):
             if not re.search(password_pattern, password) or len(password) > 16 or len(password) < 8:
                 return JsonResponse ({'message':'INVALID_PASSWORD'}, status=400)
 
+            if User.objects.filter(login_id=login_id).exists():
+                return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(email=email).exists():
                 return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(nickname=data['nickname']).exists():
