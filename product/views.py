@@ -20,7 +20,7 @@ from product.models  import(
     ProductOotd
     )
 
-class ProductDetail(View):
+class ProductDetailView(View):
     def get(self, request, product_id):
         if not Product.objects.filter(id=product_id).exists():
             return JsonResponse({'message':'PRODUCT_NOT_FOUND'}, status=404)

@@ -30,13 +30,11 @@ class CartView(View):
         if not product.color.filter(id=color_id).exists() or not product.size.filter(id=size_id).exists() or type(quantity) is not int:
             return JsonResponse({'message':'BAD_REQUEST'}, status=400)
 
-        if Cart.objects.filter(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id).exists():
-            cart           = Cart.objects.get(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)
-            cart.quantity += quantity
-            cart.save()
-            return JsonResponse({'message':'QUANTITY_ADD_SUCCESS'}, status=200)
+        cart = Cart.objects.get_or_create(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)[0]
 
-        Cart.objects.create(user_id=user_id, product_id=data['product_id'], size_id=size_id, color_id=color_id, quantity=quantity)
+        cart.quantity += quantity
+        cart.save()
+
         return JsonResponse({'message':'SUCCESS'}, status=200)
 
     @Login_decorator
@@ -55,7 +53,7 @@ class CartView(View):
                 'quantity'       : cart.quantity,
                 'product_price'  : cart.product.price,
                 'discount_price' : format(int(round(cart.product.price-(cart.product.price * cart.product.discount_rate),-2)),'.2f'),
-                'shipping_price' : 2500.00
+                'shipping_fee' : 2500
             } for cart in user.user_cart.all()]
         })
 

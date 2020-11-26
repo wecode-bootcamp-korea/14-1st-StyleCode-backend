@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'ootd' ,
     'order' ,
     'cart' ,
+    'search'
 ]
 
 MIDDLEWARE = [
