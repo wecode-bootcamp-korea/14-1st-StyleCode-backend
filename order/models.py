@@ -7,7 +7,7 @@ class OrderStatus(models.Model):
         db_table = 'order_statuses'
 
 class OrderRequest(models.Model):
-    request      = models.CharField(max_length=50, null=True)
+    request      = models.CharField(max_length=50)
 
     class Meta:
         db_table = 'order_requests'
