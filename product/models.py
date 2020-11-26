@@ -8,7 +8,7 @@ class FirstCategory(models.Model):
 
 class SecondCategory(models.Model):
     name           = models.CharField(max_length=15)
-    first_category = models.ForeignKey('FirstCategory', on_delete=models.CASCADE, null=True)
+    first_category = models.ForeignKey('FirstCategory', on_delete=models.CASCADE)
 
     class Meta:
         db_table= 'second_categories'
