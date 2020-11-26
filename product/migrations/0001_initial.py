@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('discount_rate', models.DecimalField(decimal_places=2, max_digits=3, null=True)),
                 ('sales_product', models.IntegerField(default=0)),
-                ('main_image_url', models.URLField(null=True)),
+                ('main_image_url', models.URLField()),
                 ('like', models.IntegerField(default=0)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('brand', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.brand')),

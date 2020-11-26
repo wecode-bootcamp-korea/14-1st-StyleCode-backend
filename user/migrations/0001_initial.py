@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('cart', '0001_initial'),
         ('product', '0001_initial'),
         ('ootd', '0001_initial'),
     ]
