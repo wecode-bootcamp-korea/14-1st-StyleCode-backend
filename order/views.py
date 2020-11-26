@@ -121,7 +121,7 @@ class OrderView(View):
             recipient_phone_number = recipient_phone_number,
             user                   = user,
             coupon_id              = coupon_id        if coupon_id else None,
-            order_status           = OrderStatus.objects.get(id=ORDER_STATUTS_COPLETE),
+            order_status_id        = ORDER_STATUTS_COPLETE,
             order_request_id       = order_request_id if order_request_id else None,
             self_request           = self_request     if self_request else None
         ).pk
