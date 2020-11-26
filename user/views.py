@@ -14,7 +14,6 @@ class SignUpView(View):
             login_id  = data['login_id']
             password  = data['password']
             email     = data['email']
-            gender    = data['gender']
             profile_image_url = data.get('profile_image_url', None)
             print (data)
 
@@ -29,6 +28,8 @@ class SignUpView(View):
             if not re.search(password_pattern, password) or len(password) > 16 or len(password) < 8:
                 return JsonResponse ({'message':'INVALID_PASSWORD'}, status=400)
 
+            if User.objects.filter(login_id=login_id).exists():
+                return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(email=email).exists():
                 return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(nickname=data['nickname']).exists():
@@ -36,15 +37,16 @@ class SignUpView(View):
 
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            User.objects.create(
+            user = User.objects.create(
                 login_id          = login_id,
                 password          = hashed_password,
                 nickname          = data['nickname'],
                 email             = email,
                 gender_id         = 1 if data['gender']=='남자' else 2,
                 birth_date        = data['birth_date'],
-                profile_image_url = profile_image_url
+                profile_image_url = profile_image_url,
             )
+            user.coupon.add(1)
             return JsonResponse ({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
@@ -108,4 +110,4 @@ class ProfileView(View):
 
             return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
-            return JsonResponse({'message:':'INVALID_KEY'}, status=400)
+            return JsonResponse({'message':'INVALID_KEY'}, status=400)

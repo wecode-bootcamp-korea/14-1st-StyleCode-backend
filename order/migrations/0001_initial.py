@@ -23,7 +23,8 @@ class Migration(migrations.Migration):
                 ('orderer_email', models.EmailField(max_length=254)),
                 ('recipient_name', models.CharField(max_length=10)),
                 ('recipient_phone_number', models.CharField(max_length=20)),
-                ('coupon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='cart.coupon')),
+                ('self_request', models.CharField(max_length=50, null=True)),
+                ('coupon', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='cart.coupon')),
             ],
             options={
                 'db_table': 'orders',
@@ -34,7 +35,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('request', models.CharField(max_length=50, null=True)),
-                ('self_request', models.CharField(max_length=50, null=True)),
             ],
             options={
                 'db_table': 'order_requests',
@@ -88,12 +88,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='order_request',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.orderrequest'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='order.orderrequest'),
         ),
         migrations.AddField(
             model_name='order',
             name='order_status',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='order.orderstatus'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='order.orderstatus'),
         ),
         migrations.AddField(
             model_name='order',
