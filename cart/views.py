@@ -30,7 +30,7 @@ class CartView(View):
         if not product.color.filter(id=color_id).exists() or not product.size.filter(id=size_id).exists() or type(quantity) is not int:
             return JsonResponse({'message':'BAD_REQUEST'}, status=400)
 
-        cart, created = Cart.objects.get_or_create(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)
+        cart = Cart.objects.get_or_create(user_id=user_id, product_id=product_id, color_id=color_id, size_id=size_id)[0]
 
         cart.quantity += quantity
         cart.save()
