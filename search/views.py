@@ -38,6 +38,7 @@ class Search(View):
 
         product_count = products.count()
         product_list  = [{
+            'product_title'  : product.title,
             'product_brand'  : product.brand.name,
             'product_image'  : product.main_image_url,
             'description'    : product.description,

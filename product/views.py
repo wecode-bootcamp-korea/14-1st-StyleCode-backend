@@ -42,6 +42,7 @@ class ProductDetailView(View):
 
         return JsonResponse({
             'product' : {
+                'productId'       : product.id,
                 'headerTopTitle'  : product.title,
                 'headerMiddleImg' : product.main_image_url,
                 'discount'        : product.discount_rate,
@@ -50,8 +51,14 @@ class ProductDetailView(View):
                 'likeNumber'      : product.like,
                 'reviewNumber'    : product.ootd.count(),
                 'mile'            : int(product.price - (product.price * product.discount_rate) * decimal.Decimal(0.05)),
-                'colors'          : [color.name for color in product.color.all()],
-                'sizes'           : [size.name for size in product.size.all()],
+                'colors'          : [{
+                    'colorId'        : color.id,
+                    'colorName'      : color.name
+                    } for color in product.color.all()],
+                'sizes'           : [{
+                    'sizeId'         : size.id,
+                    'sizeName'       : size.name
+                } for size in product.size.all()],
                 'stocks'          : [{
                     'color' : stock.color.name,
                     'size'  : stock.size.name,
@@ -94,7 +101,6 @@ class CategoryView(View):
             return JsonResponse({ 'categories':categories}, status=200)
         except Category.DoesNotExist :
             return JsonResponse({'message:':'INVALID_CATEGORY'}, status=400)
-
 
 class ProductView(View):
     def get(self, request):
@@ -166,4 +172,3 @@ class MdChoiceView(View):
             return JsonResponse({'message:':'SUCCESS', 'mdchoice_list':mdchoice_list}, status=200)
         except Product.DoesNotExist:
             return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
-

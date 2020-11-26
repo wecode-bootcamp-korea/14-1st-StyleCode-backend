@@ -4,8 +4,6 @@ class Cart(models.Model):
     quantity = models.IntegerField(default=0)
     product  = models.ForeignKey('product.Product', on_delete=models.CASCADE, related_name='product_cart')
     user     = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='user_cart')
-    size     = models.ForeignKey('product.Size', on_delete=models.CASCADE)
-    color    = models.ForeignKey('product.Color', on_delete=models.CASCADE)
     order    = models.ForeignKey('order.Order', on_delete=models.CASCADE, null=True)
     size     = models.ForeignKey('product.Size', on_delete=models.CASCADE)
     color    = models.ForeignKey('product.Color', on_delete=models.CASCADE)

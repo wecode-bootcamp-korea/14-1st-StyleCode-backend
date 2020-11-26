@@ -16,6 +16,7 @@ class User(models.Model):
     ootd_like         = models.ManyToManyField('ootd.Ootd', through='ootd.Like', related_name='like_user')
     follow            = models.ManyToManyField('self', through='ootd.Follow')
     cart              = models.ManyToManyField('product.Product', through='cart.Cart')
+    point             = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'users'
