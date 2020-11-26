@@ -33,6 +33,7 @@ class OotdDetailView(View):
 
             post = posts.get(id = ootd_id)
             ootd_post = {
+                    "id"                : post.id, 
                     'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
                     'productImg'        : [product_image.main_image_url for product_image in post.product_set.all()],
                     'productName'       : [product_name.title for product_name in post.product_set.all()],
@@ -42,12 +43,13 @@ class OotdDetailView(View):
                     'author'            : post.user.nickname,
                     'introdution'       : post.user.description,
                     'tagsName'          : [tag_name.tag.tag_name for tag_name in post.ootdtag_set.all()],
-                    'datetime'          : post.created_at.strftime("%Y-%m-%d %H:%M:%S") ,
+                    'datetime'          : post.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                     'description'       : post.description,
                     'follower'          : post.like_set.count(),
                     'commentNum'        : post.comment_set.count(),
                     'comments'          : [
                             {
+                                'commentCreatedAt': comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                                 'commentAuthor'    : comment.user.nickname,
                                 'commentAuthorImg' : comment.user.profile_image_url,
                                 'comment'          : comment.content,
@@ -62,13 +64,13 @@ class OotdDetailView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)
 
 class OotdlView(View):
+    @Login_decorator
     def post(self, request):
         data = json.loads(request.body)
         try:
-            user = User.objects.get(id = data['user_id'])
             post = Ootd.objects.create(
                 description = data['description'],
-                user = user
+                user = request.user
             )
             # 태그 로직 (# 기준으로 split하여서 태그인 값만 걸러 중간 테이블에 추가)
             description_list = data['description'].split('#')
@@ -107,7 +109,8 @@ class OotdlView(View):
                 'tag'
             )
             offset    = request.GET.get('offset',0)
-            limit     = request.GET.get('limit', 5)
+            limit     = request.GET.get('limit', 10)
+             
             ootd_list = [
                 {   'id'                : post.id,
                     'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
@@ -124,13 +127,14 @@ class OotdlView(View):
                     'commentNum'        : post.comment_set.count(),
                     'comments'          : [
                             {
+                                'commentCreatedAt': comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                                 'commentAuthor'    : comment.user.nickname,
                                 'commentAuthorImg' : comment.user.profile_image_url if comment.user.profile_image_url else "https://staticassets-a.styleshare.io/c70c244d8d/img/profilepics/profile_140x140.png",
                                 'comment'          : comment.content,
                                 'parent_id'        : comment.parent_id
                             } for comment in post.comment_set.all()[:2]
                                          ]
-                } for post in posts[int(offset):int(limit)]
+                } for post in posts[int(offset):int(offset)+int(limit)]
             ]
             return JsonResponse({'ootd_list' : ootd_list}, status = 200)
         
@@ -138,7 +142,7 @@ class OotdlView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)   
 
 class OotdCommentView(View):
-    @Login_decorator
+    
     def post(self, request, ootd_id):
         data = json.loads(request.body)
 
@@ -147,7 +151,7 @@ class OotdCommentView(View):
 
             Comment.objects.create(
                 content = data['content'],
-                user = request.user,
+                user_id = data['user_id'],
                 ootd = post
                 )
 

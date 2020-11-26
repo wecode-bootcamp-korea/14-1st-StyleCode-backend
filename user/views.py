@@ -14,7 +14,6 @@ class SignUpView(View):
             login_id  = data['login_id']
             password  = data['password']
             email     = data['email']
-            gender    = data['gender']
             profile_image_url = data.get('profile_image_url', None)
 
             id_pattern = '[a-z0-9]'
