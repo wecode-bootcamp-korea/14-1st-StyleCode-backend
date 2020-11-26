@@ -58,7 +58,7 @@ class OrderView(View):
         data         = json.loads(request.body)
         user         = request.user
         
-        ORDER_STATUTS_COPLETE = 1
+        ORDER_STATUS_COMPLETE = 1
 
         required_key = { 
             'orderer_name',
