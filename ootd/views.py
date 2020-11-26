@@ -33,6 +33,7 @@ class OotdDetailView(View):
 
             post = posts.get(id = ootd_id)
             ootd_post = {
+                    "id"                : post.id,
                     'contentImg'        : [image.image_url for image in post.ootdimageurl_set.all()],
                     'productImg'        : [product_image.main_image_url for product_image in post.product_set.all()],
                     'productName'       : [product_name.title for product_name in post.product_set.all()],
@@ -47,7 +48,8 @@ class OotdDetailView(View):
                     'follower'          : post.like_set.count(),
                     'commentNum'        : post.comment_set.count(),
                     'comments'          : [
-                            {
+                            {   
+                                "id"               : comment.id,
                                 'commentAuthor'    : comment.user.nickname,
                                 'commentAuthorImg' : comment.user.profile_image_url,
                                 'comment'          : comment.content,
@@ -62,10 +64,11 @@ class OotdDetailView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)
 
 class OotdlView(View):
+    @Login_decorator
     def post(self, request):
         data = json.loads(request.body)
         try:
-            user = User.objects.get(id = data['user_id'])
+            user = User.objects.get(id = request.user)
             post = Ootd.objects.create(
                 description = data['description'],
                 user = user
@@ -123,7 +126,8 @@ class OotdlView(View):
                     'follower'          : post.like_set.count(),
                     'commentNum'        : post.comment_set.count(),
                     'comments'          : [
-                            {
+                            {   
+                                "id"               : comment.id,
                                 'commentAuthor'    : comment.user.nickname,
                                 'commentAuthorImg' : comment.user.profile_image_url if comment.user.profile_image_url else "https://staticassets-a.styleshare.io/c70c244d8d/img/profilepics/profile_140x140.png",
                                 'comment'          : comment.content,
