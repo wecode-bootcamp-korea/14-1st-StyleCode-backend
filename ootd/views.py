@@ -142,7 +142,7 @@ class OotdlView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)   
 
 class OotdCommentView(View):
-    
+    @Login_decorator
     def post(self, request, ootd_id):
         data = json.loads(request.body)
 
@@ -151,7 +151,7 @@ class OotdCommentView(View):
 
             Comment.objects.create(
                 content = data['content'],
-                user_id = data['user_id'],
+                user = request.user,
                 ootd = post
                 )
 
