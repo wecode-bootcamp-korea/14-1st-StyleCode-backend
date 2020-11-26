@@ -1,5 +1,5 @@
 # StyleCode Project
-<img src=“https://i.ibb.co/h2xWRXL/2020-11-16-6-27-04.png” height=“100"/>
+<img src="https://i.ibb.co/h2xWRXL/2020-11-16-6-27-04.png" height="100"/>
 ## 개요
 #### 목적 : [스타일쉐어](https://www.styleshare.kr/) 를 클론하면서 리액트와 장고의 기본기를 향상한다
 #### 일정 : 2020년 11월 16일 (월) ~ 11월 27일 (금), 12일간 진행
