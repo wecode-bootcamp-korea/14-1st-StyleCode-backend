@@ -21,7 +21,7 @@ class OrderView(View):
         coupons       = coupon_check(user)
         orderer_info  = OrdererInformation.objects.filter(user=user)
         order_request = OrderRequest.objects.all()
-        carts         = Cart.objects.filter(id__in=data['cart_ids'])
+        carts         = Cart.objects.filter(id__in=data['cart_ids']).select_related('size','color')
 
         return JsonResponse({
             'order' : {
@@ -58,6 +58,8 @@ class OrderView(View):
         data         = json.loads(request.body)
         user         = request.user
         
+        ORDER_STATUTS_COPLETE = 1
+
         required_key = { 
             'orderer_name',
             'orderer_phone_number',
@@ -89,10 +91,14 @@ class OrderView(View):
         self_request           = data.get('self_request')
         coupon_id              = data.get('coupon_id')
         order_number           = order_number_create()
-        
+
+        carts = []
         for cart_id in cart_ids:
             if not Cart.objects.filter(id=cart_id).exists():
                 return JsonResponse({'message':'CART_NOT_FOUND'},status=404)
+            if Order.objects.filter(cart__id=cart_id).exists():
+                return JsonResponse({'message':'BAD_REQUEST'}, status=400)
+            carts.append(Cart.objects.get(id=cart_id))
 
         if orderer_save_check:
             OrdererInformation.objects.update_or_create(user=user, defaults={
@@ -103,6 +109,7 @@ class OrderView(View):
 
         if address_save_check:           
             user.address = address
+            user.save()
         
         order_id = Order.objects.create(
             address                = address,
@@ -113,16 +120,20 @@ class OrderView(View):
             recipient_name         = recipient_name,
             recipient_phone_number = recipient_phone_number,
             user                   = user,
-            coupon_id              = coupon_id if coupon_id else None,
-            order_status           = OrderStatus.objects.get(order_status='주문완료'),
+            coupon_id              = coupon_id        if coupon_id else None,
+            order_status           = OrderStatus.objects.get(id=ORDER_STATUTS_COPLETE),
             order_request_id       = order_request_id if order_request_id else None,
-            self_request           = self_request if self_request else None
+            self_request           = self_request     if self_request else None
         ).pk
 
         if coupon_id:
-            user.coupon.delete(id=coupon_id)
+            user.coupon.get(id=coupon_id).delete()
+        
+        user.point -= point
+        user.save()
 
-        for cart_id in cart_ids:
-            Cart.objects.get(id=cart_id).order_id = order_id 
+        for cart in carts:
+            cart.order_id = order_id 
+            cart.save()
 
         return JsonResponse({'message':'SUCCESS'},status=200)

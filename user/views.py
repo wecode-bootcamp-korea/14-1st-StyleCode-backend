@@ -34,15 +34,16 @@ class SignUpView(View):
 
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            User.objects.create(
+            user = User.objects.create(
                 login_id          = login_id,
                 password          = hashed_password,
                 nickname          = data['nickname'],
                 email             = email,
                 gender_id         = 1 if data['gender']=='남자' else 2,
                 birth_date        = data['birth_date'],
-                profile_image_url = profile_image_url
+                profile_image_url = profile_image_url,
             )
+            user.coupon.add(1)
             return JsonResponse ({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'INVALID_KEYS'}, status=400)
