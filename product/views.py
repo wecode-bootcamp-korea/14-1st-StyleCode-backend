@@ -141,37 +141,13 @@ class ProductView(View):
                     }for product in products.annotate(discount_price=F('price') - F('price')*('discount_rate')).order_by(sort_type[sort])]
 
                 return JsonResponse({'category_list':category_list, 'sorting':sorting}, status=200)
-
-            if second_category_id:
-                second_category_list =[{
-                    'brand'          : product.brand.name,
-                    'title'          : product.title,
-                    'price'          : product.price,
-                    'discount_rate'  : product.discount_rate,
-                    'main_image_url' : product.main_image_url,
-                    'discount_price' :format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-                    }for product in products.order_by(sort_type[sort])]
-
-                return JsonResponse({'message:':'SUCCESS', 'second_category_list':second_category_list, 'sorting':sorting}, status=200)
-
-            if third_category_id:
-                third_category_list =[{
-                    'brand'          : product.brand.name,
-                    'title'          : product.title,
-                    'price'          : product.price,
-                    'discount_rate'  : product.discount_rate,
-                    'main_image_url' : product.main_image_url,
-                    'discount_price' :format(int(round(product.price - (product.price * product.discount_rate),-2)),'.2f')
-                    }for product in products.order_by(sort_type[sort])]
-
-                return JsonResponse({'message:':'SUCCESS', 'third_category_list':third_category_list, 'sorting':sorting}, status=200)
-
+ 
         except Product.DoesNotExist:
             return JsonResponse({'message:':'PRODUCT_DOES_NOT_EXIST'}, status=400)
 
 class MdChoiceView(View):
     def get (self,request, mdchoice):
-        try :
+        try:
             offset = [0,8,16]
             limit  = [8,16,24]
 
