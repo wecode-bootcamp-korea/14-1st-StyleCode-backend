@@ -6,5 +6,5 @@ urlpatterns = [
     path('/<int:product_id>', ProductDetailView.as_view()),
     path('', ProductView.as_view()),
     path('/mdchoice/<int:mdchoice>', MdChoiceView.as_view()),
-    path('/categorys', CategoryView.as_view()),
+    path('/categories', CategoryView.as_view()),
 ]

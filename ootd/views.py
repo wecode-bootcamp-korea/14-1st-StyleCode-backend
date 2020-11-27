@@ -65,7 +65,7 @@ class OotdlView(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            user = User.objects.get(id = data['user_id'])
+            user = User.objects.get(id = request.user.id)
             post = Ootd.objects.create(
                 description = data['description'],
                 user = user
