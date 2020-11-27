@@ -61,11 +61,11 @@ class OotdDetailView(View):
         except Ootd.DoesNotExist:
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)
 
-class OotdlView(View):
+class OotdView(View):
     def post(self, request):
         data = json.loads(request.body)
         try:
-            user = User.objects.get(id = data['user_id'])
+            user = User.objects.get(id = request.user.id)
             post = Ootd.objects.create(
                 description = data['description'],
                 user = user
@@ -130,7 +130,7 @@ class OotdlView(View):
                                 'parent_id'        : comment.parent_id
                             } for comment in post.comment_set.all()[:2]
                                          ]
-                } for post in posts[int(offset):int(limit)]
+                } for post in posts
             ]
             return JsonResponse({'ootd_list' : ootd_list}, status = 200)
         
