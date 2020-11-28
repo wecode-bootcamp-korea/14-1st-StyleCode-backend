@@ -35,6 +35,35 @@
 - 인스타그램과 유사한 sns기능인 ootd를 구경하면서 좋아요, 팔로우 그리고 댓글까지 남긴다.
 - 장바구니에 담아놨던 상품을 주문한다.
 
+## 백엔드 멤버의 기능 구현
+
+- 전체
+    - modeling
+
+- 김민구
+    - product.ProductDetailView
+    - search.Search
+    - cart.CartView
+    - cart.CartDetailView
+    - order.OrderView
+    
+- 정현석
+    - user.SignUpView
+    - user.LogInView
+    - user.ProfileView
+    - product.CategoryView
+    - product.ProductView
+    - product.MdChoiceView
+    
+- 백승찬
+    - ootd.OotdDetailView
+    - ootd.OotdView
+    - ootd.OotdCommentView
+    - ootd.CommentView
+    - ootd.ReCommentView
+    - ootd.LikeView
+    - ootd.FollowView
+
 ## Contributing
 
 - Thanks to [Wecode](https://wecode.co.kr/)
@@ -50,7 +79,6 @@
 
 ## Links
 
-- Project homepage : 주소 나오면 주소까지 올리겠습니다
 - Repository
   - [프론트엔드](https://github.com/wecode-bootcamp-korea/14-1st-StyleCode-frontend/)
   - [백엔드](https://github.com/wecode-bootcamp-korea/14-1st-StyleCode-backend)
