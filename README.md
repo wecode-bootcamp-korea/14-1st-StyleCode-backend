@@ -62,7 +62,7 @@
     - ootd.ReCommentView : 댓글 수정, 삭제
     - ootd.CommentView : 대댓글 생성, 수정, 삭제
     - ootd.LikeView : 게시물 좋아요 기능
-    - ootd.FollowView : 유저 
+    - ootd.FollowView : 유저 팔로우 기능
 
 ## Contributing
 
