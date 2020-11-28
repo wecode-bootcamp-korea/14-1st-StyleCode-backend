@@ -41,28 +41,28 @@
     - modeling
 
 - 김민구
-    - product.ProductDetailView
-    - search.Search
-    - cart.CartView
-    - cart.CartDetailView
-    - order.OrderView
+    - product.ProductDetailView : 특정 상품의 상세 정보를 조회
+    - search.Search : 특정 단어를 포함하는 상품, 브랜드, ootd, 사용자를 조회
+    - cart.CartView : 장바구니를 보여주거나 상품을 추가하는 기능
+    - cart.CartDetailView : 장바구니에 담긴 상품의 수량을 변경하거나 삭제하는 기능
+    - order.OrderView : 주문 페이지를 작성할 때 필요한 정보를 조회, 주문 기능
     
 - 정현석
-    - user.SignUpView
-    - user.LogInView
-    - user.ProfileView
-    - product.CategoryView
-    - product.ProductView
-    - product.MdChoiceView
+    - user.SignUpView : 회원 가입 기능
+    - user.LogInView : 로그인 기능
+    - user.ProfileView : 사용자의 프로필을 조회, 수정하는 기능
+    - product.CategoryView : 3단계에 걸친 카테고리 전체를 조회
+    - product.ProductView : 상품 전체 리스트를 조회
+    - product.MdChoiceView : 인기 상품을 조회
     
 - 백승찬
-    - ootd.OotdDetailView
-    - ootd.OotdView
-    - ootd.OotdCommentView
-    - ootd.CommentView
-    - ootd.ReCommentView
-    - ootd.LikeView
-    - ootd.FollowView
+    - ootd.OotdDetailView : 특정 게시물의 상세 정보를 조회
+    - ootd.OotdView : 전체 게시물을 조회, 게시물 생성
+    - ootd.OotdCommentView : 게시물의 댓글 생성
+    - ootd.ReCommentView : 댓글 수정, 삭제
+    - ootd.CommentView : 대댓글 생성, 수정, 삭제
+    - ootd.LikeView : 게시물 좋아요 기능
+    - ootd.FollowView : 유저 
 
 ## Contributing
 
