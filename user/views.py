@@ -15,8 +15,6 @@ class SignUpView(View):
             password  = data['password']
             email     = data['email']
             profile_image_url = data.get('profile_image_url', None)
-            print (data)
-
             id_pattern = '[a-z0-9]'
             email_pattern = '[a-zA-Z0-9_-]+@[a-z]+.[a-z]+'
             password_pattern = '[A-Za-z0-9]'
@@ -29,7 +27,7 @@ class SignUpView(View):
                 return JsonResponse ({'message':'INVALID_PASSWORD'}, status=400)
 
             if User.objects.filter(login_id=login_id).exists():
-                return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
+                return JsonResponse ({'message':'EXIST_ID'}, status=400)
             if User.objects.filter(email=email).exists():
                 return JsonResponse ({'message':'EXIST_EMAIL'}, status=400)
             if User.objects.filter(nickname=data['nickname']).exists():
@@ -44,7 +42,7 @@ class SignUpView(View):
                 email             = email,
                 gender_id         = 1 if data['gender']=='남자' else 2,
                 birth_date        = data['birth_date'],
-                profile_image_url = profile_image_url,
+                profile_image_url = profile_image_url
             )
             user.coupon.add(1)
             return JsonResponse ({'message':'SUCCESS'}, status=200)

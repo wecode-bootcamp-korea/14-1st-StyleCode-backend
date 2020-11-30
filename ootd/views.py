@@ -62,6 +62,7 @@ class OotdDetailView(View):
             return JsonResponse({"MESSAGE" : "OOTD_DOES_NOT_EXIST"}, status = 400)
 
 class OotdView(View):
+    @Login_decorator
     def post(self, request):
         data = json.loads(request.body)
         try:
@@ -77,7 +78,7 @@ class OotdView(View):
                     continue
                 tag = string.split()[0]
 
-                tag =Tag.objects.get_or_create(tag_name=str('#'+tag))
+                tag =Tag.objects.get_or_create(tag_name=str('#'+tag))[0]
                 post.tag.add(tag)
 
             if str(type(data['image_list'])) != "<class 'list'>":
