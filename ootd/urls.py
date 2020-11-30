@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views      import (OotdDetailView,
-                         OotdlView,
+                         OotdView,
                          OotdCommentView,
                          LikeView,
                          FollowView,
@@ -10,7 +10,7 @@ from .views      import (OotdDetailView,
 
 urlpatterns=[
     path('/<int:ootd_id>', OotdDetailView.as_view()),
-    path('', OotdlView.as_view()),
+    path('', OotdView.as_view()),
     path('/<int:ootd_id>/comments', OotdCommentView.as_view()),
     path('/comment/<int:comment_id>',CommentView.as_view()),
     path('/<int:ootd_id>/like', LikeView.as_view()),
