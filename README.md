@@ -88,6 +88,10 @@
   
 - API Documentation
   - https://documenter.getpostman.com/view/13449551/TVev3jCD
+  
+- project Flow
+  - 전체 Flow      https://youtu.be/R5B5GT-giVY 
+  - 회원가입 & 로그인 https://youtu.be/jlvjuR4RBWk
 
 ## License
 
