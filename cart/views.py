@@ -54,7 +54,7 @@ class CartView(View):
                 'product_price'  : cart.product.price,
                 'discount_price' : int(round(cart.product.price-(cart.product.price * cart.product.discount_rate),-2)),
                 'shipping_fee'   : 2500
-            } for cart in user.user_cart.all()]
+            } for cart in user.user_cart.all() if not cart.order_id]
         },status=200)
 
 class CartDetailView(View): 

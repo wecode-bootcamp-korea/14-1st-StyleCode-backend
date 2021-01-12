@@ -16,7 +16,8 @@ db_truncate.py
 csv_data/
 *.csv
 settings.json
-
+.idea/
+.DS_Store
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
