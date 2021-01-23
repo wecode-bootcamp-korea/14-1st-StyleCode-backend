@@ -12,11 +12,15 @@ from cart.models  import Cart
 class OrderView(View):
     @Login_decorator
     def get(self, request):
+ 
         data = json.loads(request.body)
         user = request.user
-
+        
         if 'cart_ids' not in data:
-            return JsonResponse({'message':'KEY_ERROR'},status=400)
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
+
+        if Cart.objects.filter(id__in=data['cart_ids'], order_id__isnull=False).exists():
+            return JsonResponse({'message':'ALREADY_ORDERED'}, status=400)
 
         coupons       = coupon_check(user)
         orderer_info  = OrdererInformation.objects.filter(user=user)
@@ -95,9 +99,9 @@ class OrderView(View):
         carts = []
         for cart_id in cart_ids:
             if not Cart.objects.filter(id=cart_id).exists():
-                return JsonResponse({'message':'CART_NOT_FOUND'},status=404)
+                return JsonResponse({'message':'CART_DOES_NOT_EXIST'},status=404)
             if Order.objects.filter(cart__id=cart_id).exists():
-                return JsonResponse({'message':'BAD_REQUEST'}, status=400)
+                return JsonResponse({'message':'ALREADY_ORDERED'}, status=400)
             carts.append(Cart.objects.get(id=cart_id))
 
         if orderer_save_check:

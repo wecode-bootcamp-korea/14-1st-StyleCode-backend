@@ -86,7 +86,6 @@ class Product(models.Model):
     second_category = models.ForeignKey('SecondCategory', on_delete=models.CASCADE)
     third_category  = models.ForeignKey('ThirdCategory', on_delete=models.CASCADE)
     ootd            = models.ManyToManyField('ootd.Ootd', through='ProductOotd')
-    created_at      = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'products'

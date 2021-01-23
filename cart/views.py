@@ -23,7 +23,7 @@ class CartView(View):
         quantity   = data['quantity']
 
         if not Product.objects.filter(id=product_id).exists():
-            return JsonResponse({'message':'PRODUCT_DOES_NOT_EXISTS'}, status=400)
+            return JsonResponse({'message':'PRODUCT_DOES_NOT_EXISTS'}, status=404)
         
         product = Product.objects.get(id=product_id)
 
