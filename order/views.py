@@ -26,9 +26,9 @@ class OrderView(View):
         return JsonResponse({
             'order' : {
                 'orderer_info'  : {
-                    'orderer_name'          : orderer_info.orderer_name,
-                    'orderer_email'         : orderer_info.orderer_email,
-                    'orderer_phone_number'  : orderer_info.orderer_phone_number
+                    'orderer_name'          : orderer_info[0].orderer_name,
+                    'orderer_email'         : orderer_info[0].orderer_email,
+                    'orderer_phone_number'  : orderer_info[0].orderer_phone_number
                 } if orderer_info else None,
                 'address'       : user.address,
                 'order_request' : [{

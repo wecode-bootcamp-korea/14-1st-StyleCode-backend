@@ -85,6 +85,13 @@
 - Repository
   - [프론트엔드](https://github.com/wecode-bootcamp-korea/14-1st-StyleCode-frontend/)
   - [백엔드](https://github.com/wecode-bootcamp-korea/14-1st-StyleCode-backend)
+  
+- API Documentation
+  - https://documenter.getpostman.com/view/13449551/TVev3jCD
+  
+- project Flow
+  - 전체 Flow      https://youtu.be/R5B5GT-giVY 
+  - 회원가입 & 로그인 https://youtu.be/jlvjuR4RBWk
 
 ## License
 
