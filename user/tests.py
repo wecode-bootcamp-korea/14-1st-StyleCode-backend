@@ -36,6 +36,9 @@ class UserSignUp(TestCase):
         }
         response = client.post('/users/signup', json.dumps(user), content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json),{
+                'message': 'SUCCESS'
+            }
 
     def test_sigup_ID_Overlap(self):
 
@@ -50,6 +53,9 @@ class UserSignUp(TestCase):
         }
         response = client.post('/users/signup', json.dumps(user), content_type='application/json')
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json),{
+                'message': 'INVALID_ID'
+            }
 
     def test_sigup_NoEmail(self):
 
